@@ -1,0 +1,94 @@
+{
+  "ag_news": {
+    "semhash_0.9_removed": 12128,
+    "minhash_0.7_removed": 5190,
+    "disputed_semhash_only": {
+      "count": 7145,
+      "median_tokens": 39.0,
+      "share_under_10_tokens": 0.0,
+      "length_buckets": {
+        "0-5": 0,
+        "5-10": 0,
+        "10-25": 284,
+        "25-50": 5807,
+        "50-+": 1054
+      }
+    },
+    "agreed_by_both": {
+      "count": 4983,
+      "median_tokens": 40.0,
+      "share_under_10_tokens": 0.0,
+      "length_buckets": {
+        "0-5": 0,
+        "5-10": 0,
+        "10-25": 108,
+        "25-50": 4323,
+        "50-+": 552
+      }
+    },
+    "kept_by_both": {
+      "count": 107665,
+      "median_tokens": 37.0,
+      "share_under_10_tokens": 0.0,
+      "length_buckets": {
+        "0-5": 2,
+        "5-10": 0,
+        "10-25": 7764,
+        "25-50": 89787,
+        "50-+": 10112
+      }
+    },
+    "disputed_lexical_overlap": {
+      "records": 7145,
+      "median_best_jaccard": 0.0,
+      "share_below_0.2_jaccard": 0.5639,
+      "share_above_0.5": 0.3933
+    }
+  },
+  "wikitext": {
+    "semhash_0.9_removed": 264450,
+    "minhash_0.7_removed": 210976,
+    "disputed_semhash_only": {
+      "count": 57454,
+      "median_tokens": 3.0,
+      "share_under_10_tokens": 0.7075,
+      "length_buckets": {
+        "0-5": 35227,
+        "5-10": 5424,
+        "10-25": 1664,
+        "25-50": 977,
+        "50-+": 14162
+      }
+    },
+    "agreed_by_both": {
+      "count": 206996,
+      "median_tokens": 1.0,
+      "share_under_10_tokens": 0.9265,
+      "length_buckets": {
+        "0-5": 187002,
+        "5-10": 4788,
+        "10-25": 2041,
+        "25-50": 1342,
+        "50-+": 11823
+      }
+    },
+    "kept_by_both": {
+      "count": 896599,
+      "median_tokens": 86.0,
+      "share_under_10_tokens": 0.1715,
+      "length_buckets": {
+        "0-5": 97522,
+        "5-10": 56247,
+        "10-25": 52351,
+        "25-50": 73574,
+        "50-+": 616905
+      }
+    },
+    "disputed_lexical_overlap": {
+      "records": 57454,
+      "median_best_jaccard": 0.0,
+      "share_below_0.2_jaccard": 0.732,
+      "share_above_0.5": 0.247
+    }
+  }
+}

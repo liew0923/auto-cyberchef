@@ -117,10 +117,10 @@ def precision_recall(synthetic: dict) -> None:
         if method == "exact":
             continue
         color = family_of(method)
-        ax.scatter(row["recall"] * 100, row["precision"] * 100, s=70, color=color, zorder=3, edgecolor=SURFACE, linewidth=2)
+        ax.scatter(row["recall"] * 100, row["precision_lower_bound"] * 100, s=70, color=color, zorder=3, edgecolor=SURFACE, linewidth=2)
         ax.annotate(
             method.replace("hybrid_", "hybrid "),
-            (row["recall"] * 100, row["precision"] * 100),
+            (row["recall"] * 100, row["precision_lower_bound"] * 100),
             textcoords="offset points",
             xytext=(8, 4),
             fontsize=8.5,

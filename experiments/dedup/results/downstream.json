@@ -1,0 +1,95 @@
+{
+  "n_train": 120000,
+  "n_test": 7600,
+  "label_agreement": {
+    "exact_norm": {
+      "pairs": 218,
+      "same_label": 190,
+      "same_label_pct": 87.16
+    },
+    "simhash_3": {
+      "pairs": 1857,
+      "same_label": 1712,
+      "same_label_pct": 92.19
+    },
+    "minhash_0.7": {
+      "pairs": 5190,
+      "same_label": 4705,
+      "same_label_pct": 90.66
+    },
+    "semhash_0.9": {
+      "pairs": 12126,
+      "same_label": 11069,
+      "same_label_pct": 91.28
+    },
+    "semhash_0.8": {
+      "pairs": 29541,
+      "same_label": 27055,
+      "same_label_pct": 91.58
+    },
+    "random_pairs_baseline": {
+      "same_label_pct": 24.64
+    }
+  },
+  "accuracy": {
+    "full (no dedup)": {
+      "train_size": 120000,
+      "accuracy": 0.9255,
+      "fit_seconds": 60.0
+    },
+    "exact_norm": {
+      "train_size": 119782,
+      "accuracy": 0.9241,
+      "fit_seconds": 46.0,
+      "random_subsample_accuracy": 0.9245,
+      "delta_vs_random_subsample": -0.0004,
+      "delta_vs_full": -0.0014
+    },
+    "simhash_3": {
+      "train_size": 118143,
+      "accuracy": 0.9241,
+      "fit_seconds": 56.9,
+      "random_subsample_accuracy": 0.9249,
+      "delta_vs_random_subsample": -0.0008,
+      "delta_vs_full": -0.0014
+    },
+    "minhash_0.7": {
+      "train_size": 114810,
+      "accuracy": 0.9246,
+      "fit_seconds": 73.5,
+      "random_subsample_accuracy": 0.9258,
+      "delta_vs_random_subsample": -0.0012,
+      "delta_vs_full": -0.0009
+    },
+    "semhash_0.9": {
+      "train_size": 107874,
+      "accuracy": 0.9229,
+      "fit_seconds": 44.1,
+      "random_subsample_accuracy": 0.9249,
+      "delta_vs_random_subsample": -0.002,
+      "delta_vs_full": -0.0026
+    },
+    "semhash_0.8": {
+      "train_size": 90459,
+      "accuracy": 0.9233,
+      "fit_seconds": 41.9,
+      "random_subsample_accuracy": 0.9205,
+      "delta_vs_random_subsample": 0.0028,
+      "delta_vs_full": -0.0022
+    }
+  },
+  "leakage": {
+    "minhash_0.7": {
+      "leaked_test_records": 595,
+      "leaked_pct": 7.83,
+      "accuracy_on_leaked": 0.921,
+      "accuracy_on_clean": 0.9259
+    },
+    "semhash_0.9": {
+      "leaked_test_records": 1404,
+      "leaked_pct": 18.47,
+      "accuracy_on_leaked": 0.9288,
+      "accuracy_on_clean": 0.9248
+    }
+  }
+}
