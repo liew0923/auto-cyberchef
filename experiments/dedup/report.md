@@ -50,13 +50,14 @@ makes the same choice, so the comparison is like-for-like.
 
 | method | ag_news removed | wikitext removed | wikitext time |
 |---|---|---|---|
-| Exact hash | 0 (0.00%) | 191,616 (16.45%) | 1.8 s |
-| Exact, normalised | 218 (0.18%) | 205,298 (17.62%) | 18.5 s |
+| Exact hash | 0 (0.00%) | 191,616 (16.45%) | 2.0 s |
+| Exact, normalised | 218 (0.18%) | 205,298 (17.62%) | 20.2 s |
 | Bloom filter | 231 (0.19%) | 205,330 (17.62%) | 23.1 s |
-| SimHash ≤ 3 bits | 1,857 (1.55%) | 234,578 (20.14%) | 97.9 s |
-| MinHash ≥ 0.7 | 5,190 (4.33%) | 210,976 (18.11%) | 122.6 s |
-| **SemHash ≥ 0.9** | **12,128 (10.11%)** | **264,450 (22.70%)** | 464.4 s |
-| SemHash ≥ 0.8 | 29,542 (24.62%) | 395,602 (33.96%) | 566.8 s |
+| SimHash ≤ 3 bits | 1,857 (1.55%) | 234,578 (20.14%) | 91.9 s |
+| MinHash ≥ 0.7 | 5,190 (4.33%) | 210,976 (18.11%) | 131.8 s |
+| Character MinHash ≥ 0.6 | 11,167 (9.31%) | 235,794 (20.24%) | 756.3 s |
+| **SemHash ≥ 0.9** | **12,128 (10.11%)** | **264,399 (22.70%)** | 266.2 s |
+| SemHash ≥ 0.8 | 29,544 (24.62%) | 395,554 (33.95%) | 422.1 s |
 
 The Bloom filter reproduces normalised exact dedup with 13 false positives on ag_news and 32 on
 wikitext — 0.016% of its decisions — using a 2.1 MB bit array instead of storing 1.16M digests.
@@ -65,6 +66,14 @@ The approximation behaves exactly as the theory predicts, which is the point of 
 SemHash removes **2.3× more than MinHash on ag_news** and flags **18.5% of the ag_news test set**
 as duplicating a training record, against MinHash's 7.8%. Those are very different claims about
 the same corpus, and nothing above can say which is correct.
+
+The character-shingle variant introduced in §5 lands within a point of SemHash on both corpora
+from pure lexical matching — but note its wikitext time. Character shingles cost one shingle
+per character instead of one per word, so 1.16M wiki lines generate roughly 340M shingles
+against 134M for word shingles, and the 128-permutation loop runs over all of them. On long
+documents the cheap lexical method becomes the **slowest** of the three, at 756 s against
+SemHash's 266 s. It is cheap on short records and expensive on long ones, which is the
+opposite of the usual assumption.
 
 ## 4. Does the extra removal find real duplicates? A ground-truth benchmark
 

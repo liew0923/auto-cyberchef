@@ -1,0 +1,207 @@
+{
+  "dataset": "wikitext",
+  "n_records": 1165029,
+  "methods": {
+    "bloom": {
+      "removed": 205330,
+      "kept": 959699,
+      "removed_pct": 17.624,
+      "seconds": 24.33
+    },
+    "exact": {
+      "removed": 191616,
+      "kept": 973413,
+      "removed_pct": 16.447,
+      "seconds": 1.99
+    },
+    "exact_norm": {
+      "removed": 205298,
+      "kept": 959731,
+      "removed_pct": 17.622,
+      "seconds": 20.23
+    },
+    "minhash_0.5": {
+      "removed": 216804,
+      "kept": 948225,
+      "removed_pct": 18.609,
+      "seconds": 131.83
+    },
+    "minhash_0.6": {
+      "removed": 213933,
+      "kept": 951096,
+      "removed_pct": 18.363,
+      "seconds": 131.82
+    },
+    "minhash_0.7": {
+      "removed": 210976,
+      "kept": 954053,
+      "removed_pct": 18.109,
+      "seconds": 131.82
+    },
+    "minhash_0.8": {
+      "removed": 208390,
+      "kept": 956639,
+      "removed_pct": 17.887,
+      "seconds": 131.82
+    },
+    "minhash_0.9": {
+      "removed": 206561,
+      "kept": 958468,
+      "removed_pct": 17.73,
+      "seconds": 131.82
+    },
+    "charminhash_0.6": {
+      "removed": 235794,
+      "kept": 929235,
+      "removed_pct": 20.239,
+      "seconds": 756.34
+    },
+    "charminhash_0.7": {
+      "removed": 224608,
+      "kept": 940421,
+      "removed_pct": 19.279,
+      "seconds": 756.32
+    },
+    "charminhash_0.8": {
+      "removed": 215740,
+      "kept": 949289,
+      "removed_pct": 18.518,
+      "seconds": 756.31
+    },
+    "simhash_0": {
+      "removed": 207090,
+      "kept": 957939,
+      "removed_pct": 17.776,
+      "seconds": 91.87
+    },
+    "simhash_1": {
+      "removed": 209642,
+      "kept": 955387,
+      "removed_pct": 17.995,
+      "seconds": 91.87
+    },
+    "simhash_2": {
+      "removed": 217378,
+      "kept": 947651,
+      "removed_pct": 18.659,
+      "seconds": 91.88
+    },
+    "simhash_3": {
+      "removed": 234578,
+      "kept": 930451,
+      "removed_pct": 20.135,
+      "seconds": 91.92
+    },
+    "semhash_0.9": {
+      "removed": 264399,
+      "kept": 900630,
+      "removed_pct": 22.695,
+      "seconds": 266.16
+    },
+    "semhash_0.95": {
+      "removed": 225562,
+      "kept": 939467,
+      "removed_pct": 19.361,
+      "seconds": 273.69
+    },
+    "semhash_0.8": {
+      "removed": 395554,
+      "kept": 769475,
+      "removed_pct": 33.952,
+      "seconds": 422.05
+    },
+    "semhash_0.85": {
+      "removed": 317365,
+      "kept": 847664,
+      "removed_pct": 27.241,
+      "seconds": 456.86
+    }
+  },
+  "timing_detail": {
+    "exact": 1.99,
+    "exact_norm": 20.23,
+    "bloom": 24.33,
+    "bloom_bytes": 2093789,
+    "minhash_index": 129.82,
+    "minhash_0.5": 131.83,
+    "minhash_0.6": 131.82,
+    "minhash_0.7": 131.82,
+    "minhash_0.8": 131.82,
+    "minhash_0.9": 131.82,
+    "charminhash_index": 754.3,
+    "charminhash_0.6": 756.34,
+    "charminhash_0.7": 756.32,
+    "charminhash_0.8": 756.31,
+    "simhash_index": 89.87,
+    "simhash_0": 91.87,
+    "simhash_1": 91.87,
+    "simhash_2": 91.88,
+    "simhash_3": 91.92,
+    "semhash_index": 170.66,
+    "semhash_0.9": 266.16,
+    "semhash_0.95": 273.69,
+    "semhash_0.8": 422.05,
+    "semhash_0.85": 456.86
+  },
+  "bloom_false_positives": 32,
+  "overlap": {
+    "minhash_0.7|semhash_0.9": {
+      "both": 206974,
+      "only_first": 4002,
+      "only_second": 57425
+    },
+    "simhash_3|semhash_0.9": {
+      "both": 206589,
+      "only_first": 27989,
+      "only_second": 57810
+    },
+    "minhash_0.7|simhash_3": {
+      "both": 207770,
+      "only_first": 3206,
+      "only_second": 26808
+    },
+    "exact_norm|semhash_0.9": {
+      "both": 201893,
+      "only_first": 3405,
+      "only_second": 62506
+    }
+  },
+  "examples": {
+    "semhash_only": [
+      {
+        "removed": " = = = Toronto = = = \n",
+        "duplicate_of": " = = = Toronto and Chicago = = = \n"
+      },
+      {
+        "removed": " = = = \" This Silence is Mine \" = = = \n",
+        "duplicate_of": " = = Silence = = \n"
+      },
+      {
+        "removed": " = Sacrifice ( 2008 ) = \n",
+        "duplicate_of": " = Sacrifice ( 2005 ) = \n"
+      },
+      {
+        "removed": " = = = Distance measurement = = = \n",
+        "duplicate_of": " = = = Size and measurement = = = \n"
+      }
+    ],
+    "minhash_only": [
+      {
+        "removed": " Blue Lights on the Runway ( 2009 ) \n",
+        "duplicate_of": " = = = Blue Lights on the Runway = = = \n"
+      },
+      {
+        "removed": " A2 . \" Luxurious \" ( Album Version ) – 4 : 24 \n",
+        "duplicate_of": " \" Luxurious \" ( Album Version ) – 4 : 24 \n"
+      },
+      {
+        "removed": " Lárus was sentenced to 9 months in prison by the District Court of Reykjavík for a major breach of trust . Out of the 9 months , 6 were suspended for 2 years . The Supreme Court of Iceland acquitted Lárus . \n",
+        "duplicate_of": " Guðmundur was sentenced to 9 months in prison by the District Court of Reykjavík for a major breach of trust . Out of the 9 months , 6 were suspended for 2 years . The Supreme Court of Iceland acquitted Guðmundur . \n"
+      },
+      {
+        "removed": " Diehl , Alan E. ( 27 January 2003 ) . Silent Knights : Blowing the Whistle on Military Accidents and Their Cover @-@ Ups . Potomac Books . ISBN 1 @-@ 57488 @-@ 544 @-@ 8 . \n",
+        "duplicate_of": " Diehl , Alan E. ( 2003 ) . Silent Knights : Blowing the Whistle on Military Accidents and Their Cover @-@ Ups . Potomac Books . ISBN 1 @-@ 57488 @-@ 544 @-@ 8 . \n"
+      }
+    ]
+  }
+}

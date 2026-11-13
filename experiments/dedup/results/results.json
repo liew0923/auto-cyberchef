@@ -15,49 +15,67 @@
           "removed": 231,
           "kept": 119769,
           "removed_pct": 0.193,
-          "seconds": 1.44
+          "seconds": 1.48
         },
         "exact": {
           "removed": 0,
           "kept": 120000,
           "removed_pct": 0.0,
-          "seconds": 0.12
+          "seconds": 0.11
         },
         "exact_norm": {
           "removed": 218,
           "kept": 119782,
           "removed_pct": 0.182,
-          "seconds": 1.05
+          "seconds": 1.18
         },
         "minhash_0.5": {
           "removed": 8081,
           "kept": 111919,
           "removed_pct": 6.734,
-          "seconds": 5.52
+          "seconds": 5.68
         },
         "minhash_0.6": {
           "removed": 7012,
           "kept": 112988,
           "removed_pct": 5.843,
-          "seconds": 5.52
+          "seconds": 5.68
         },
         "minhash_0.7": {
           "removed": 5190,
           "kept": 114810,
           "removed_pct": 4.325,
-          "seconds": 5.52
+          "seconds": 5.68
         },
         "minhash_0.8": {
           "removed": 3157,
           "kept": 116843,
           "removed_pct": 2.631,
-          "seconds": 5.52
+          "seconds": 5.68
         },
         "minhash_0.9": {
           "removed": 702,
           "kept": 119298,
           "removed_pct": 0.585,
-          "seconds": 5.52
+          "seconds": 5.68
+        },
+        "charminhash_0.6": {
+          "removed": 11167,
+          "kept": 108833,
+          "removed_pct": 9.306,
+          "seconds": 36.83
+        },
+        "charminhash_0.7": {
+          "removed": 8777,
+          "kept": 111223,
+          "removed_pct": 7.314,
+          "seconds": 36.83
+        },
+        "charminhash_0.8": {
+          "removed": 6176,
+          "kept": 113824,
+          "removed_pct": 5.147,
+          "seconds": 36.83
         },
         "simhash_0": {
           "removed": 305,
@@ -87,48 +105,52 @@
           "removed": 12128,
           "kept": 107872,
           "removed_pct": 10.107,
-          "seconds": 22.12
+          "seconds": 20.32
         },
         "semhash_0.95": {
-          "removed": 6201,
-          "kept": 113799,
+          "removed": 6200,
+          "kept": 113800,
           "removed_pct": 5.167,
-          "seconds": 22.99
+          "seconds": 21.35
         },
         "semhash_0.8": {
-          "removed": 29542,
-          "kept": 90458,
-          "removed_pct": 24.618,
-          "seconds": 22.48
+          "removed": 29544,
+          "kept": 90456,
+          "removed_pct": 24.62,
+          "seconds": 21.67
         },
         "semhash_0.85": {
-          "removed": 19471,
-          "kept": 100529,
-          "removed_pct": 16.226,
-          "seconds": 23.69
+          "removed": 19472,
+          "kept": 100528,
+          "removed_pct": 16.227,
+          "seconds": 23.24
         }
       },
       "timing_detail": {
-        "exact": 0.12,
-        "exact_norm": 1.05,
-        "bloom": 1.44,
+        "exact": 0.11,
+        "exact_norm": 1.18,
+        "bloom": 1.48,
         "bloom_bytes": 215664,
-        "minhash_index": 5.4,
-        "minhash_0.5": 5.52,
-        "minhash_0.6": 5.52,
-        "minhash_0.7": 5.52,
-        "minhash_0.8": 5.52,
-        "minhash_0.9": 5.52,
-        "simhash_index": 3.16,
+        "minhash_index": 5.57,
+        "minhash_0.5": 5.68,
+        "minhash_0.6": 5.68,
+        "minhash_0.7": 5.68,
+        "minhash_0.8": 5.68,
+        "minhash_0.9": 5.68,
+        "charminhash_index": 36.72,
+        "charminhash_0.6": 36.83,
+        "charminhash_0.7": 36.83,
+        "charminhash_0.8": 36.83,
+        "simhash_index": 3.17,
         "simhash_0": 3.28,
         "simhash_1": 3.28,
         "simhash_2": 3.28,
         "simhash_3": 3.28,
-        "semhash_index": 15.23,
-        "semhash_0.9": 22.12,
-        "semhash_0.95": 22.99,
-        "semhash_0.8": 22.48,
-        "semhash_0.85": 23.69
+        "semhash_index": 13.06,
+        "semhash_0.9": 20.32,
+        "semhash_0.95": 21.35,
+        "semhash_0.8": 21.67,
+        "semhash_0.85": 23.24
       },
       "bloom_false_positives": 13,
       "overlap": {
@@ -138,9 +160,9 @@
           "only_second": 7145
         },
         "simhash_3|semhash_0.9": {
-          "both": 1816,
-          "only_first": 41,
-          "only_second": 10312
+          "both": 1815,
+          "only_first": 42,
+          "only_second": 10313
         },
         "minhash_0.7|simhash_3": {
           "both": 1660,
@@ -160,22 +182,22 @@
             "duplicate_of": "Stocks Slip After Colgate Warns  NEW YORK (Reuters) - Stocks fell on Monday as warnings of  lower earnings from consumer goods giants Colgate-Palmolive and  Unilever weighed on markets."
           },
           {
-            "removed": "Redskins Top Giants, Break Losing Streak (AP) AP - Stop the game and have a parade  #151; the Washington Redskins finally scored 20 points. The historic moment occurred with 41 seconds left in the first half of Sunday's rout of the New York Giants, when tight end Robert Royal went to the ground to c",
-            "duplicate_of": "A giant win for Redskins LANDOVER, Md. -- Stop the game and have a parade. The Washington Redskins finally scored 20 points. The big moment occurred with 41 seconds left in the first half of yesterday's rout of the New York Giants, when tight end Robert Royal caught Patrick Ramsey's 9-yard pass. Roy"
+            "removed": "FCC approves broadband over power line rules The US Federal Communications Commission (FCC) has cleared the way for power companies to roll out broadband over power line service by approving a set of rules designed to limit interference to other radio frequency devices.",
+            "duplicate_of": "FCC approves BPL interference rules The U.S. Federal Communications Commission (FCC) on Thursday cleared the way for power companies to roll out broadband over power line service by approving a set of rules designed to limit interference to other radio frequency devices such as amateur radios."
           },
           {
             "removed": "Telekom Austria Plans to Buy Mobiltel for \\$1.5 Bln (Update7) Telekom Austria AG plans to buy Bulgaria #39;s largest wireless company, MobilTel EAD, for 1.15 billion euros (\\$1.5 billion), adding 3 million subscribers in a nation where less than half the population has a cellular phone.",
             "duplicate_of": "Telekom Austria Wins Mobiltel Bid Option for \\$2.1 Bln (Update2) Telekom Austria AG, the country #39;s biggest phone operator, won the right to buy Bulgaria #39;s largest mobile phone company, MobilTel EAD, for 1.6 billion euros (\\$2.1 billion), an acquisition that would add 3 million subscribers."
           },
           {
-            "removed": "Health of Arafat said to deteriorate JERUSALEM -- The health of Palestinian leader Yasser Arafat deteriorated yesterday, and Palestinian doctors were rushed to his Ramallah compound in the West Bank to treat what has so far been diagnosed as a stomach disorder, according to senior Palestinian offici",
-            "duplicate_of": "Health of Arafat said to deteriorate The health of Palestinian leader Yasser Arafat deteriorated yesterday, and Palestinian doctors were rushed to his Ramallah compound in the "
+            "removed": "Stocks surge on news about oil prices Stocks rose sharply yesterday, extending their rally for a second session as investors expressed relief over plummeting oil prices following a government report that showed a buildup in crude inventories.",
+            "duplicate_of": "Stocks extend rally for a second session NEW YORK - Stocks rose sharply Wednesday, extending their rally for a second session as investors expressed relief over plummeting oil prices following a government report that showed a buildup in crude inventories."
           }
         ],
         "minhash_only": [
           {
-            "removed": "OPEC wrestles over output increase as hurricane, Iraq attacks lift prices OPEC members were divided yesterday on whether their output should be increased in a bid to boost global supply that might cause oil prices to drop.",
-            "duplicate_of": "OPEC wrestles over output increase as hurricane, Iraq attacks lift &lt;b&gt;...&lt;/b&gt; OPEC members were divided yesterday on whether their output should be increased in a bid to boost global supply that might cause oil prices to drop."
+            "removed": "Security threats outside the PC Most IT Managers won #39;t question the importance of security, but this priority has been sliding between the third and fourth most important focus for companies.",
+            "duplicate_of": "McAfee aims at small firms with e-mail service Most IT Managers won #39;t question the importance of security, but this priority has been sliding between the third and fourth most important focus for companies."
           },
           {
             "removed": "BlackBerry, Bluetooth Miss a Shot to Move Into More Hands these two uses of wireless technology have remained stubbornly irrelevant to many mainstream users, despite the benefits they might offer and the hype they often get in the press.",
@@ -200,132 +222,154 @@
           "removed": 205330,
           "kept": 959699,
           "removed_pct": 17.624,
-          "seconds": 23.13
+          "seconds": 24.33
         },
         "exact": {
           "removed": 191616,
           "kept": 973413,
           "removed_pct": 16.447,
-          "seconds": 1.77
+          "seconds": 1.99
         },
         "exact_norm": {
           "removed": 205298,
           "kept": 959731,
           "removed_pct": 17.622,
-          "seconds": 18.54
+          "seconds": 20.23
         },
         "minhash_0.5": {
           "removed": 216804,
           "kept": 948225,
           "removed_pct": 18.609,
-          "seconds": 122.65
+          "seconds": 131.83
         },
         "minhash_0.6": {
           "removed": 213933,
           "kept": 951096,
           "removed_pct": 18.363,
-          "seconds": 122.64
+          "seconds": 131.82
         },
         "minhash_0.7": {
           "removed": 210976,
           "kept": 954053,
           "removed_pct": 18.109,
-          "seconds": 122.64
+          "seconds": 131.82
         },
         "minhash_0.8": {
           "removed": 208390,
           "kept": 956639,
           "removed_pct": 17.887,
-          "seconds": 122.64
+          "seconds": 131.82
         },
         "minhash_0.9": {
           "removed": 206561,
           "kept": 958468,
           "removed_pct": 17.73,
-          "seconds": 122.64
+          "seconds": 131.82
+        },
+        "charminhash_0.6": {
+          "removed": 235794,
+          "kept": 929235,
+          "removed_pct": 20.239,
+          "seconds": 756.34
+        },
+        "charminhash_0.7": {
+          "removed": 224608,
+          "kept": 940421,
+          "removed_pct": 19.279,
+          "seconds": 756.32
+        },
+        "charminhash_0.8": {
+          "removed": 215740,
+          "kept": 949289,
+          "removed_pct": 18.518,
+          "seconds": 756.31
         },
         "simhash_0": {
           "removed": 207090,
           "kept": 957939,
           "removed_pct": 17.776,
-          "seconds": 97.89
+          "seconds": 91.87
         },
         "simhash_1": {
           "removed": 209642,
           "kept": 955387,
           "removed_pct": 17.995,
-          "seconds": 97.89
+          "seconds": 91.87
         },
         "simhash_2": {
           "removed": 217378,
           "kept": 947651,
           "removed_pct": 18.659,
-          "seconds": 97.9
+          "seconds": 91.88
         },
         "simhash_3": {
           "removed": 234578,
           "kept": 930451,
           "removed_pct": 20.135,
-          "seconds": 97.94
+          "seconds": 91.92
         },
         "semhash_0.9": {
-          "removed": 264450,
-          "kept": 900579,
-          "removed_pct": 22.699,
-          "seconds": 464.35
+          "removed": 264399,
+          "kept": 900630,
+          "removed_pct": 22.695,
+          "seconds": 266.16
         },
         "semhash_0.95": {
-          "removed": 225616,
-          "kept": 939413,
-          "removed_pct": 19.366,
-          "seconds": 471.65
+          "removed": 225562,
+          "kept": 939467,
+          "removed_pct": 19.361,
+          "seconds": 273.69
         },
         "semhash_0.8": {
-          "removed": 395602,
-          "kept": 769427,
-          "removed_pct": 33.956,
-          "seconds": 566.81
+          "removed": 395554,
+          "kept": 769475,
+          "removed_pct": 33.952,
+          "seconds": 422.05
         },
         "semhash_0.85": {
-          "removed": 317374,
-          "kept": 847655,
-          "removed_pct": 27.242,
-          "seconds": 598.72
+          "removed": 317365,
+          "kept": 847664,
+          "removed_pct": 27.241,
+          "seconds": 456.86
         }
       },
       "timing_detail": {
-        "exact": 1.77,
-        "exact_norm": 18.54,
-        "bloom": 23.13,
+        "exact": 1.99,
+        "exact_norm": 20.23,
+        "bloom": 24.33,
         "bloom_bytes": 2093789,
-        "minhash_index": 120.86,
-        "minhash_0.5": 122.65,
-        "minhash_0.6": 122.64,
-        "minhash_0.7": 122.64,
-        "minhash_0.8": 122.64,
-        "minhash_0.9": 122.64,
-        "simhash_index": 96.11,
-        "simhash_0": 97.89,
-        "simhash_1": 97.89,
-        "simhash_2": 97.9,
-        "simhash_3": 97.94,
-        "semhash_index": 330.87,
-        "semhash_0.9": 464.35,
-        "semhash_0.95": 471.65,
-        "semhash_0.8": 566.81,
-        "semhash_0.85": 598.72
+        "minhash_index": 129.82,
+        "minhash_0.5": 131.83,
+        "minhash_0.6": 131.82,
+        "minhash_0.7": 131.82,
+        "minhash_0.8": 131.82,
+        "minhash_0.9": 131.82,
+        "charminhash_index": 754.3,
+        "charminhash_0.6": 756.34,
+        "charminhash_0.7": 756.32,
+        "charminhash_0.8": 756.31,
+        "simhash_index": 89.87,
+        "simhash_0": 91.87,
+        "simhash_1": 91.87,
+        "simhash_2": 91.88,
+        "simhash_3": 91.92,
+        "semhash_index": 170.66,
+        "semhash_0.9": 266.16,
+        "semhash_0.95": 273.69,
+        "semhash_0.8": 422.05,
+        "semhash_0.85": 456.86
       },
       "bloom_false_positives": 32,
       "overlap": {
         "minhash_0.7|semhash_0.9": {
-          "both": 206996,
-          "only_first": 3980,
-          "only_second": 57454
+          "both": 206974,
+          "only_first": 4002,
+          "only_second": 57425
         },
         "simhash_3|semhash_0.9": {
-          "both": 206607,
-          "only_first": 27971,
-          "only_second": 57843
+          "both": 206589,
+          "only_first": 27989,
+          "only_second": 57810
         },
         "minhash_0.7|simhash_3": {
           "both": 207770,
@@ -333,34 +377,34 @@
           "only_second": 26808
         },
         "exact_norm|semhash_0.9": {
-          "both": 201909,
-          "only_first": 3389,
-          "only_second": 62541
+          "both": 201893,
+          "only_first": 3405,
+          "only_second": 62506
         }
       },
       "examples": {
         "semhash_only": [
           {
-            "removed": " = = Campaign development = = \n",
-            "duplicate_of": " = = Campaign = = \n"
+            "removed": " = = = Toronto = = = \n",
+            "duplicate_of": " = = = Toronto and Chicago = = = \n"
           },
           {
-            "removed": " = = = Diamond Jubilee = = = \n",
-            "duplicate_of": " = = = Diamond = = = \n"
+            "removed": " = = = \" This Silence is Mine \" = = = \n",
+            "duplicate_of": " = = Silence = = \n"
           },
           {
-            "removed": " = = = Agni 's Philosophy = = = \n",
-            "duplicate_of": " = = = = Agni = = = = \n"
+            "removed": " = Sacrifice ( 2008 ) = \n",
+            "duplicate_of": " = Sacrifice ( 2005 ) = \n"
           },
           {
-            "removed": " She sailed later that month for the Mediterranean , but , once she reached Gibraltar , she was diverted to Freetown , Sierra Leone to search for German commerce raiders . The ship was transferred to the North America and West Indies Station in October and was refitted in Sheerness between 18 Januar",
-            "duplicate_of": " The ship sailed to Freetown , Sierra Leone on 30 August and arrived on 4 September to search for German commerce raiders . She was transferred back to the UK in November for a more thorough refit at Sheerness between 18 December and 23 March 1940 . In the meantime , the 2nd Destroyer Flotilla had b"
+            "removed": " = = = Distance measurement = = = \n",
+            "duplicate_of": " = = = Size and measurement = = = \n"
           }
         ],
         "minhash_only": [
           {
-            "removed": " WWA World Tag Team Championship ( 1 time ) \n",
-            "duplicate_of": " World Tag Team Championship ( 1 time ) \n"
+            "removed": " Blue Lights on the Runway ( 2009 ) \n",
+            "duplicate_of": " = = = Blue Lights on the Runway = = = \n"
           },
           {
             "removed": " A2 . \" Luxurious \" ( Album Version ) – 4 : 24 \n",
@@ -371,8 +415,8 @@
             "duplicate_of": " Guðmundur was sentenced to 9 months in prison by the District Court of Reykjavík for a major breach of trust . Out of the 9 months , 6 were suspended for 2 years . The Supreme Court of Iceland acquitted Guðmundur . \n"
           },
           {
-            "removed": " World Tag Team Championship ( 1 time ) – with Brian Kendrick \n",
-            "duplicate_of": " ICW Tag Team Championship ( 1 time ) – with Brian Kendrick \n"
+            "removed": " Diehl , Alan E. ( 27 January 2003 ) . Silent Knights : Blowing the Whistle on Military Accidents and Their Cover @-@ Ups . Potomac Books . ISBN 1 @-@ 57488 @-@ 544 @-@ 8 . \n",
+            "duplicate_of": " Diehl , Alan E. ( 2003 ) . Silent Knights : Blowing the Whistle on Military Accidents and Their Cover @-@ Ups . Potomac Books . ISBN 1 @-@ 57488 @-@ 544 @-@ 8 . \n"
           }
         ]
       }
@@ -427,8 +471,8 @@
         "flagged_pct": 2.75
       },
       "semhash_0.8": {
-        "flagged": 3131,
-        "flagged_pct": 41.197
+        "flagged": 3130,
+        "flagged_pct": 41.184
       },
       "semhash_0.85": {
         "flagged": 2142,
