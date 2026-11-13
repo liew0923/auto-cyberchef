@@ -28,7 +28,8 @@ METHODS = ("exact_norm", "bloom", "minhash", "simhash", "semhash", "hybrid_casca
 def corpus(n: int) -> list[str]:
     from datasets import load_dataset
 
-    lines = [line for line in load_dataset("Salesforce/wikitext", "wikitext-103-raw-v1")["train"]["text"] if line.strip()]
+    column = load_dataset("Salesforce/wikitext", "wikitext-103-raw-v1")["train"]["text"]
+    lines = [line for line in column if line.strip()]
     return lines if n >= len(lines) else lines[:n]
 
 

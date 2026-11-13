@@ -62,8 +62,8 @@ def fit_score(
 def main() -> None:
     RESULTS.mkdir(exist_ok=True)
     ag = load_dataset("fancyzhx/ag_news")
-    texts, labels = ag["train"]["text"], np.array(ag["train"]["label"])
-    test_texts, test_labels = ag["test"]["text"], np.array(ag["test"]["label"])
+    texts, labels = list(ag["train"]["text"]), np.array(ag["train"]["label"])
+    test_texts, test_labels = list(ag["test"]["text"]), np.array(ag["test"]["label"])
     n = len(texts)
     rng = np.random.default_rng(SEED)
 
@@ -107,13 +107,12 @@ def main() -> None:
     leaked_minhash = np.zeros(len(test_texts), dtype=bool)
     leaked_minhash[pj[cross] - n] = True
 
-    index = SemHash.from_records(texts)
+    index = SemHash.from_records([{"id": i, "text": text} for i, text in enumerate(texts)], columns=["text"])
+    semhash_result = index.deduplicate(
+        [{"id": i, "text": text} for i, text in enumerate(test_texts)], threshold=0.9
+    )
     leaked_semhash = np.zeros(len(test_texts), dtype=bool)
-    semhash_result = index.deduplicate(test_texts, threshold=0.9)
-    leaked_lookup = {dup.record if isinstance(dup.record, str) else dup.record["text"] for dup in semhash_result.filtered}
-    for i, text in enumerate(test_texts):
-        if text in leaked_lookup:
-            leaked_semhash[i] = True
+    leaked_semhash[[dup.record["id"] for dup in semhash_result.filtered]] = True
 
     for name, leaked in (("minhash_0.7", leaked_minhash), ("semhash_0.9", leaked_semhash)):
         correct = baseline_pred == test_labels

@@ -132,6 +132,10 @@ def examples(texts: list[str], reps: dict, a: str, b: str, k: int = 4, seed: int
 
 
 def run_dataset(name: str, texts: list[str]) -> dict:
+    cached = RESULTS / f"summary_{name}.json"
+    if cached.exists():
+        print(f"== {name}: reusing {cached.name}", flush=True)
+        return json.loads(cached.read_text())
     print(f"== {name}: {len(texts):,} records", flush=True)
     masks, reps, secs = course_methods(texts)
     print("   course methods done", flush=True)
@@ -153,6 +157,7 @@ def run_dataset(name: str, texts: list[str]) -> dict:
         "minhash_only": examples(texts, reps, mh, sem),
     }
     np.savez_compressed(RESULTS / f"masks_{name}.npz", **masks)
+    cached.write_text(json.dumps(summary, indent=2, ensure_ascii=False))
     for method, row in summary["methods"].items():
         print(f"   {method:14s} removed {row['removed']:>9,} ({row['removed_pct']:6.2f}%)  {row['seconds']}s", flush=True)
     return summary
@@ -185,29 +190,34 @@ def cross_split(train: list[str], test: list[str]) -> dict:
     for k in SIMHASH_DISTANCES:
         report(f"simhash_{k}", flags(qi[dist <= k], qj[dist <= k]))
 
-    index = SemHash.from_records(train)
+    # Index the training records, then ask which test records duplicate one of them.
+    index = SemHash.from_records([{"id": i, "text": text} for i, text in enumerate(train)], columns=["text"])
+    test_records = [{"id": i, "text": text} for i, text in enumerate(test)]
     for th in SEMHASH_THRESHOLDS:
-        result = index.deduplicate(test, threshold=th)
-        report(f"semhash_{th}", np.arange(len(test)) < len(result.filtered))
+        result = index.deduplicate(test_records, threshold=th)
+        flagged = np.zeros(len(test), dtype=bool)
+        flagged[[dup.record["id"] for dup in result.filtered]] = True
+        report(f"semhash_{th}", flagged)
     return out
 
 
 def main() -> None:
     RESULTS.mkdir(exist_ok=True)
     ag = load_dataset("fancyzhx/ag_news")
-    wiki = load_dataset("Salesforce/wikitext", "wikitext-103-raw-v1")["train"]["text"]
+    ag_train, ag_test = list(ag["train"]["text"]), list(ag["test"]["text"])
+    wiki = list(load_dataset("Salesforce/wikitext", "wikitext-103-raw-v1")["train"]["text"])
     wiki_lines = [line for line in wiki if line.strip()]
     results = {
         "main_settings": MAIN,
         "wikitext_raw_lines": len(wiki),
         "wikitext_empty_lines": len(wiki) - len(wiki_lines),
         "datasets": {
-            "ag_news": run_dataset("ag_news", ag["train"]["text"]),
+            "ag_news": run_dataset("ag_news", ag_train),
             "wikitext": run_dataset("wikitext", wiki_lines),
         },
     }
     print("== ag_news train/test leakage", flush=True)
-    results["ag_news_cross_split"] = cross_split(ag["train"]["text"], ag["test"]["text"])
+    results["ag_news_cross_split"] = cross_split(ag_train, ag_test)
     (RESULTS / "results.json").write_text(json.dumps(results, indent=2, ensure_ascii=False))
     print("wrote", RESULTS / "results.json")
 

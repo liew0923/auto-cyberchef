@@ -1,13 +1,25 @@
 """Controlled benchmark with known ground truth.
 
-Real datasets have no duplicate labels, so removal counts alone cannot say which method is
-*right*. Here we take ag_news records that no method flagged in the main run (a clean base),
-inject perturbed copies of some of them, and measure for every method:
+Real datasets carry no duplicate labels, so removal counts alone cannot say which method is
+*right*. Here a base sample of ag_news is taken, perturbed copies of some of its records are
+injected, and every method is scored against that known answer key.
 
-* recall    - injected copies that were removed, per perturbation type
-* precision - removed records that really were injected copies
+Three numbers per method:
 
-Usage:  python synthetic_eval.py   (needs results/masks_ag_news.npz from run_experiment.py)
+* **recall** - share of injected copies removed, broken down by kind of edit.
+* **precision (lower bound)** - of everything removed, the share that was an injected copy.
+  The base is a natural sample, so some of the remaining removals may be genuine duplicates
+  that ag_news already contained; precision is therefore pessimistic by construction and is
+  reported as a lower bound rather than as a verdict.
+* **label disagreement among base removals** - independent evidence of real mistakes. ag_news
+  is labelled and a true duplicate of a World-news item is also World news, so a removed pair
+  whose two labels differ is a near-certain error rather than a missed natural duplicate.
+
+The base deliberately keeps natural near-duplicates (only exact duplicates are dropped). An
+earlier version of this script built the base from records that no method had flagged, which
+removed every hard case and awarded all methods a precision of exactly 1.0.
+
+Usage:  python synthetic_eval.py
 """
 
 from __future__ import annotations
@@ -71,6 +83,18 @@ def swap_halves(text: str, rng: random.Random, vocab: list[str]) -> str:
     return " ".join(words[len(words) // 2 :] + words[: len(words) // 2])
 
 
+BOILERPLATE = (
+    "Advertisement. Subscribe to our newsletter for daily updates.",
+    "Reuters - All rights reserved. Click here for the full story.",
+    "Share this article on social media. Comments are now closed.",
+)
+
+
+def boilerplate(text: str, rng: random.Random, vocab: list[str]) -> str:
+    """Wrap the text in web boilerplate, as a scraped copy of the same article would be."""
+    return f"{rng.choice(BOILERPLATE)} {text} {rng.choice(BOILERPLATE)}"
+
+
 PERTURBATIONS = {
     "reformat (case/punct.)": reformat,
     "typos (3% of chars)": typos,
@@ -78,37 +102,41 @@ PERTURBATIONS = {
     "replace 15% of words": replace_words,
     "truncate to 70%": truncate,
     "swap halves": swap_halves,
+    "wrapped in boilerplate": boilerplate,
 }
 
 
 def main() -> None:
-    texts = load_dataset("fancyzhx/ag_news")["train"]["text"]
-    flagged = np.zeros(len(texts), dtype=bool)
-    with np.load(RESULTS / "masks_ag_news.npz") as masks:
-        for name in masks.files:
-            flagged |= masks[name]
-    clean = np.flatnonzero(~flagged)
+    ag = load_dataset("fancyzhx/ag_news")["train"]
+    texts, labels = list(ag["text"]), np.array(ag["label"])
+    # Natural base: a random sample with only exact duplicates dropped, so hard cases survive.
+    eligible = np.flatnonzero(M.exact_dedup(texts, normalized=True) < 0)
     rng_np, rng = np.random.default_rng(SEED), random.Random(SEED)
-    base = [texts[i] for i in rng_np.choice(clean, size=N_BASE, replace=False)]
+    chosen = rng_np.choice(eligible, size=N_BASE, replace=False)
+    base, base_labels = [texts[i] for i in chosen], labels[chosen]
     vocab = sorted({word for text in base[:2000] for word in text.split()})
 
-    corpus, kind = list(base), ["base"] * N_BASE
+    corpus, kind, source_of = list(base), ["base"] * N_BASE, list(range(N_BASE))
     sources = rng_np.choice(N_BASE, size=N_PER_TYPE * len(PERTURBATIONS), replace=False)
     for t, (name, fn) in enumerate(PERTURBATIONS.items()):
         for src in sources[t * N_PER_TYPE : (t + 1) * N_PER_TYPE]:
             corpus.append(fn(base[src], rng, vocab))
             kind.append(name)
-    kind_arr = np.array(kind)
+            source_of.append(int(src))
+    kind_arr, source_of = np.array(kind), np.array(source_of)
     is_dup = kind_arr != "base"
+    corpus_labels = base_labels[source_of]  # an injected copy inherits its source's label
 
-    masks, _, secs = course_methods(corpus)
-    masks.update(semhash_self(corpus)[0])
+    masks, reps, secs = course_methods(corpus)
+    sem_masks, sem_reps, _ = semhash_self(corpus)
+    masks.update(sem_masks)
+    reps.update(sem_reps)
     for name, result in (
         ("hybrid_cascade", hybrid.cascade(corpus)),
         ("hybrid_two_signal", hybrid.two_signal(corpus)),
         ("hybrid_two_signal_0.85", hybrid.two_signal(corpus, cosine=0.85)),
     ):
-        masks[name] = result.removed
+        masks[name], reps[name] = result.removed, result.rep
         secs[name] = result.seconds
     wanted = (
         ["exact", "exact_norm"]
@@ -117,24 +145,40 @@ def main() -> None:
         + [f"semhash_{t}" for t in SEMHASH_THRESHOLDS]
         + ["hybrid_cascade", "hybrid_two_signal", "hybrid_two_signal_0.85"]
     )
-    out = {"n_base": N_BASE, "n_injected": int(is_dup.sum()), "perturbations": list(PERTURBATIONS), "methods": {}}
+    out = {
+        "n_base": N_BASE,
+        "n_injected": int(is_dup.sum()),
+        "perturbations": list(PERTURBATIONS),
+        "note": "precision is a lower bound: the base is natural ag_news text and may contain duplicates of its own",
+        "methods": {},
+    }
     for method in wanted:
-        removed = masks[method]
+        removed, rep = masks[method], reps[method]
         tp, fp = int((removed & is_dup).sum()), int((removed & ~is_dup).sum())
         recall = tp / is_dup.sum()
         precision = tp / (tp + fp) if tp + fp else 1.0
+        # Independent error evidence: a removed pair whose ag_news labels differ is a near-certain mistake.
+        dropped = np.flatnonzero(rep >= 0)
+        cross_label = int((corpus_labels[dropped] != corpus_labels[rep[dropped]]).sum())
         out["methods"][method] = {
             "recall": round(float(recall), 4),
-            "precision": round(float(precision), 4),
-            "f1": round(float(2 * precision * recall / (precision + recall)) if tp else 0.0, 4),
-            "false_positives": fp,
+            "precision_lower_bound": round(float(precision), 4),
+            "f1_lower_bound": round(float(2 * precision * recall / (precision + recall)) if tp else 0.0, 4),
+            "removals_outside_the_answer_key": fp,
+            "cross_label_removals": cross_label,
+            "cross_label_pct_of_removals": round(100 * cross_label / max(len(dropped), 1), 2),
             "recall_by_type": {
                 name: round(float(removed[kind_arr == name].mean()), 4) for name in PERTURBATIONS
             },
             "seconds": secs.get(method),
         }
         row = out["methods"][method]
-        print(f"{method:14s} P={row['precision']:.3f} R={row['recall']:.3f} F1={row['f1']:.3f} FP={fp}")
+        print(
+            f"{method:22s} R={row['recall']:.3f} P>={row['precision_lower_bound']:.3f}"
+            f" F1>={row['f1_lower_bound']:.3f} extra={fp:>5} cross-label={cross_label:>4}"
+            f" ({row['cross_label_pct_of_removals']:.1f}%)",
+            flush=True,
+        )
     (RESULTS / "synthetic.json").write_text(json.dumps(out, indent=2))
 
 
