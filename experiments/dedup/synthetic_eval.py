@@ -142,6 +142,8 @@ def main() -> None:
         ("hybrid_cascade", hybrid.cascade(corpus)),
         ("hybrid_two_signal", hybrid.two_signal(corpus)),
         ("hybrid_two_signal_0.85", hybrid.two_signal(corpus, cosine=0.85)),
+        ("hybrid_cascade_char", hybrid.cascade(corpus, jaccard=0.6, unit="char")),
+        ("hybrid_two_signal_char", hybrid.two_signal(corpus, cosine=0.85, min_jaccard=0.3, unit="char")),
     ):
         masks[name], reps[name] = result.removed, result.rep
         secs[name] = result.seconds
@@ -151,7 +153,7 @@ def main() -> None:
         + [f"charminhash_{t}" for t in CHAR_THRESHOLDS]
         + [f"simhash_{k}" for k in SIMHASH_DISTANCES]
         + [f"semhash_{t}" for t in SEMHASH_THRESHOLDS]
-        + ["hybrid_cascade", "hybrid_two_signal", "hybrid_two_signal_0.85"]
+        + ["hybrid_cascade", "hybrid_two_signal", "hybrid_two_signal_0.85", "hybrid_cascade_char", "hybrid_two_signal_char"]
     )
     out = {
         "n_base": N_BASE,

@@ -1,0 +1,86 @@
+{
+  "seeds": [
+    101,
+    202,
+    303,
+    404,
+    505
+  ],
+  "settings": {
+    "exact_norm": {
+      "train_size": 119782,
+      "deduplicated_accuracy": 0.9241,
+      "control_mean": 0.9253,
+      "control_std": 0.00051,
+      "control_scores": [
+        0.9246,
+        0.9249,
+        0.9254,
+        0.9258,
+        0.9257
+      ],
+      "delta_vs_control_mean": -0.0012,
+      "beyond_two_sigma": true
+    },
+    "simhash_3": {
+      "train_size": 118143,
+      "deduplicated_accuracy": 0.9241,
+      "control_mean": 0.9252,
+      "control_std": 0.001,
+      "control_scores": [
+        0.9253,
+        0.9255,
+        0.9238,
+        0.9266,
+        0.925
+      ],
+      "delta_vs_control_mean": -0.0011,
+      "beyond_two_sigma": false
+    },
+    "minhash_0.7": {
+      "train_size": 114810,
+      "deduplicated_accuracy": 0.9246,
+      "control_mean": 0.9249,
+      "control_std": 0.00056,
+      "control_scores": [
+        0.9246,
+        0.9254,
+        0.9247,
+        0.9257,
+        0.9243
+      ],
+      "delta_vs_control_mean": -0.0003,
+      "beyond_two_sigma": false
+    },
+    "semhash_0.9": {
+      "train_size": 107874,
+      "deduplicated_accuracy": 0.9229,
+      "control_mean": 0.9235,
+      "control_std": 0.0005,
+      "control_scores": [
+        0.9239,
+        0.923,
+        0.9241,
+        0.9236,
+        0.923
+      ],
+      "delta_vs_control_mean": -0.0006,
+      "beyond_two_sigma": false
+    },
+    "semhash_0.8": {
+      "train_size": 90459,
+      "deduplicated_accuracy": 0.9233,
+      "control_mean": 0.9202,
+      "control_std": 0.001,
+      "control_scores": [
+        0.9217,
+        0.9189,
+        0.92,
+        0.9205,
+        0.92
+      ],
+      "delta_vs_control_mean": 0.0031,
+      "beyond_two_sigma": true
+    }
+  }
+}

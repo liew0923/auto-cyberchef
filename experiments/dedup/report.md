@@ -184,3 +184,60 @@ almost no wording (below 0.2), and those are a mixture of real paraphrase and re
 So SemHash's extra removals on ag_news are substantially real and its extra removals on
 wikitext are substantially spurious. The corpus decides, which is why a single published
 removal rate is not a quality claim.
+
+## 7. Does any of it help downstream?
+
+A deduplicator is only useful if the cleaned corpus trains a better model, so I trained a
+TF-IDF + logistic-regression topic classifier on ag_news under each deduplication setting.
+
+Deduplication also *shrinks* the training set, and less data costs accuracy on its own. Every
+deduplicated run is therefore paired with a random subsample of exactly the same size, drawn
+five times so the comparison carries an error bar.
+
+| training set | size | deduplicated | random subsample | difference |
+|---|---|---|---|---|
+| full corpus | 120,000 | 92.55% | — | — |
+| exact, normalised | 119,782 | 92.41% | 92.53% ± 0.05 | −0.12 (beyond 2σ) |
+| SimHash ≤ 3 | 118,143 | 92.41% | 92.52% ± 0.10 | −0.11 (noise) |
+| MinHash ≥ 0.7 | 114,810 | 92.46% | 92.49% ± 0.06 | −0.03 (noise) |
+| SemHash ≥ 0.9 | 107,874 | 92.29% | 92.35% ± 0.05 | −0.06 (noise) |
+| **SemHash ≥ 0.8** | **90,459** | **92.33%** | 92.02% ± 0.10 | **+0.31 (beyond 2σ)** |
+
+**Deduplication is a budget allocator, not a free win.** At removal rates under 10% it changes
+nothing a classifier can detect: every difference is inside the noise of simply drawing fewer
+records. But when a quarter of the corpus has to go, dropping duplicates beats dropping at
+random by 0.31 points — the only comparison here that clears two standard deviations in the
+positive direction. The honest claim is conditional: deduplication earns its place when you are
+already discarding data, which is exactly the pretraining situation it was designed for.
+
+The one measurable *cost* appears at the other end. Removing 218 exact duplicates scored 0.12
+points **below** removing 218 records at random, outside 2σ. Duplicated records act as mild
+upweighting of whatever they say; strip them and that signal goes too.
+
+### Train/test contamination does not inflate this benchmark
+
+7.8% of the ag_news test set duplicates a training record according to MinHash ≥ 0.7, and 18.5%
+according to SemHash ≥ 0.9. The standard worry is that a model scores inflated accuracy on
+those records because it memorised them in training. It does not:
+
+| test slice | MinHash-flagged | SemHash-flagged |
+|---|---|---|
+| accuracy on contaminated records | 92.10% | 92.88% |
+| accuracy on clean records | 92.59% | 92.48% |
+
+The contaminated slice is no easier than the clean one — for MinHash it is marginally harder.
+A 120,000-example linear classifier over a 4-way topic task has no capacity to memorise
+individual documents, so contamination buys it nothing. This result is specific to that
+setting: it is evidence against assuming leakage inflates every benchmark, not evidence that
+leakage is harmless for large generative models, where verbatim memorisation is the actual
+mechanism of concern.
+
+### Label agreement is a weak proxy for semantic methods
+
+A true duplicate of a World-news item is also World news, so I measured how often removed pairs
+share a label. Against a 25% random-pair baseline, every method scores 87–92%: exact 87.2%,
+MinHash 90.7%, SimHash 92.2%, SemHash 91.3–91.6%. The proxy does not discriminate, and for a
+clear reason — same-topic stories share a label by construction, which is precisely the case
+where semantic deduplication errs. It is informative in one direction only: ag_news contains
+byte-identical texts carrying contradicting labels, which is annotation noise rather than a
+deduplication finding.

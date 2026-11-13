@@ -22,7 +22,16 @@ import numpy as np
 
 RESULTS = Path(__file__).parent / "results"
 SIZES = (10_000, 50_000, 200_000, 600_000, 1_165_029)
-METHODS = ("exact_norm", "bloom", "minhash", "simhash", "semhash", "hybrid_cascade", "hybrid_two_signal")
+METHODS = (
+    "exact_norm",
+    "bloom",
+    "minhash",
+    "charminhash",
+    "simhash",
+    "semhash",
+    "hybrid_cascade",
+    "hybrid_cascade_char",
+)
 
 
 def corpus(n: int) -> list[str]:
@@ -49,6 +58,10 @@ def measure(method: str, n: int) -> dict:
         signatures, _ = M.featurize(texts, shingle_size=3, num_perm=128)
         pi, pj, sim = M.minhash_lsh_pairs(signatures, min_similarity=0.7)
         removed = int((M.greedy_select(len(texts), pi, pj) >= 0).sum())
+    elif method == "charminhash":
+        signatures, _ = M.featurize(texts, shingle_size=5, num_perm=128, unit="char")
+        pi, pj, sim = M.minhash_lsh_pairs(signatures, min_similarity=0.6)
+        removed = int((M.greedy_select(len(texts), pi, pj) >= 0).sum())
     elif method == "simhash":
         _, fingerprints = M.featurize(texts, shingle_size=1, num_perm=0)
         qi, qj, _ = M.simhash_pairs(fingerprints, max_distance=3)
@@ -59,8 +72,8 @@ def measure(method: str, n: int) -> dict:
         removed = len(SemHash.from_records(texts).self_deduplicate(threshold=0.9).filtered)
     elif method == "hybrid_cascade":
         removed = int(hybrid.cascade(texts).removed.sum())
-    elif method == "hybrid_two_signal":
-        removed = int(hybrid.two_signal(texts).removed.sum())
+    elif method == "hybrid_cascade_char":
+        removed = int(hybrid.cascade(texts, jaccard=0.6, unit="char").removed.sum())
     else:
         raise SystemExit(f"unknown method {method}")
 

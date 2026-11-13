@@ -46,7 +46,7 @@
         "swap halves": 0.0,
         "wrapped in boilerplate": 0.0
       },
-      "seconds": 0.26
+      "seconds": 0.29
     },
     "minhash_0.5": {
       "recall": 0.628,
@@ -64,7 +64,7 @@
         "swap halves": 0.9953,
         "wrapped in boilerplate": 0.7967
       },
-      "seconds": 1.26
+      "seconds": 1.46
     },
     "minhash_0.6": {
       "recall": 0.5788,
@@ -82,7 +82,7 @@
         "swap halves": 0.994,
         "wrapped in boilerplate": 0.7407
       },
-      "seconds": 1.26
+      "seconds": 1.46
     },
     "minhash_0.7": {
       "recall": 0.4142,
@@ -100,7 +100,7 @@
         "swap halves": 0.996,
         "wrapped in boilerplate": 0.41
       },
-      "seconds": 1.26
+      "seconds": 1.46
     },
     "minhash_0.8": {
       "recall": 0.3039,
@@ -118,7 +118,7 @@
         "swap halves": 0.966,
         "wrapped in boilerplate": 0.072
       },
-      "seconds": 1.26
+      "seconds": 1.46
     },
     "minhash_0.9": {
       "recall": 0.2063,
@@ -136,7 +136,61 @@
         "swap halves": 0.418,
         "wrapped in boilerplate": 0.002
       },
-      "seconds": 1.26
+      "seconds": 1.46
+    },
+    "charminhash_0.6": {
+      "recall": 0.8339,
+      "precision_lower_bound": 0.9568,
+      "f1_lower_bound": 0.8912,
+      "removals_outside_the_answer_key": 395,
+      "cross_label_removals": 54,
+      "cross_label_pct_of_removals": 0.59,
+      "recall_by_type": {
+        "reformat (case/punct.)": 1.0,
+        "typos (3% of chars)": 0.906,
+        "drop 15% of words": 0.872,
+        "replace 15% of words": 0.5587,
+        "truncate to 70%": 0.7953,
+        "swap halves": 0.9987,
+        "wrapped in boilerplate": 0.7067
+      },
+      "seconds": 8.94
+    },
+    "charminhash_0.7": {
+      "recall": 0.6443,
+      "precision_lower_bound": 0.9588,
+      "f1_lower_bound": 0.7707,
+      "removals_outside_the_answer_key": 291,
+      "cross_label_removals": 36,
+      "cross_label_pct_of_removals": 0.51,
+      "recall_by_type": {
+        "reformat (case/punct.)": 1.0,
+        "typos (3% of chars)": 0.7113,
+        "drop 15% of words": 0.696,
+        "replace 15% of words": 0.33,
+        "truncate to 70%": 0.3867,
+        "swap halves": 0.9993,
+        "wrapped in boilerplate": 0.3867
+      },
+      "seconds": 8.94
+    },
+    "charminhash_0.8": {
+      "recall": 0.4055,
+      "precision_lower_bound": 0.9551,
+      "f1_lower_bound": 0.5693,
+      "removals_outside_the_answer_key": 200,
+      "cross_label_removals": 16,
+      "cross_label_pct_of_removals": 0.36,
+      "recall_by_type": {
+        "reformat (case/punct.)": 1.0,
+        "typos (3% of chars)": 0.2773,
+        "drop 15% of words": 0.3413,
+        "replace 15% of words": 0.112,
+        "truncate to 70%": 0.02,
+        "swap halves": 0.998,
+        "wrapped in boilerplate": 0.09
+      },
+      "seconds": 8.94
     },
     "simhash_0": {
       "recall": 0.2881,
@@ -154,7 +208,7 @@
         "swap halves": 1.0,
         "wrapped in boilerplate": 0.0
       },
-      "seconds": 0.78
+      "seconds": 0.86
     },
     "simhash_1": {
       "recall": 0.2916,
@@ -172,7 +226,7 @@
         "swap halves": 1.0,
         "wrapped in boilerplate": 0.0007
       },
-      "seconds": 0.78
+      "seconds": 0.86
     },
     "simhash_2": {
       "recall": 0.3001,
@@ -190,7 +244,7 @@
         "swap halves": 1.0,
         "wrapped in boilerplate": 0.0033
       },
-      "seconds": 0.78
+      "seconds": 0.86
     },
     "simhash_3": {
       "recall": 0.318,
@@ -208,76 +262,76 @@
         "swap halves": 1.0,
         "wrapped in boilerplate": 0.0173
       },
-      "seconds": 0.78
+      "seconds": 0.86
     },
     "semhash_0.8": {
-      "recall": 0.891,
-      "precision_lower_bound": 0.8426,
-      "f1_lower_bound": 0.8661,
-      "removals_outside_the_answer_key": 1748,
-      "cross_label_removals": 204,
-      "cross_label_pct_of_removals": 1.84,
+      "recall": 0.8921,
+      "precision_lower_bound": 0.843,
+      "f1_lower_bound": 0.8668,
+      "removals_outside_the_answer_key": 1745,
+      "cross_label_removals": 203,
+      "cross_label_pct_of_removals": 1.83,
       "recall_by_type": {
-        "reformat (case/punct.)": 0.994,
-        "typos (3% of chars)": 0.6567,
+        "reformat (case/punct.)": 0.9933,
+        "typos (3% of chars)": 0.6573,
         "drop 15% of words": 0.9653,
-        "replace 15% of words": 0.8707,
-        "truncate to 70%": 0.952,
-        "swap halves": 1.0,
-        "wrapped in boilerplate": 0.7987
+        "replace 15% of words": 0.87,
+        "truncate to 70%": 0.95,
+        "swap halves": 0.9993,
+        "wrapped in boilerplate": 0.8093
       },
       "seconds": null
     },
     "semhash_0.85": {
-      "recall": 0.8295,
-      "precision_lower_bound": 0.9066,
-      "f1_lower_bound": 0.8664,
-      "removals_outside_the_answer_key": 897,
+      "recall": 0.8296,
+      "precision_lower_bound": 0.9067,
+      "f1_lower_bound": 0.8665,
+      "removals_outside_the_answer_key": 896,
       "cross_label_removals": 88,
       "cross_label_pct_of_removals": 0.92,
       "recall_by_type": {
-        "reformat (case/punct.)": 0.9953,
+        "reformat (case/punct.)": 0.9947,
         "typos (3% of chars)": 0.4607,
         "drop 15% of words": 0.9753,
         "replace 15% of words": 0.7707,
-        "truncate to 70%": 0.942,
-        "swap halves": 1.0,
-        "wrapped in boilerplate": 0.6627
+        "truncate to 70%": 0.94,
+        "swap halves": 0.9993,
+        "wrapped in boilerplate": 0.6667
       },
       "seconds": null
     },
     "semhash_0.9": {
-      "recall": 0.6913,
-      "precision_lower_bound": 0.9388,
-      "f1_lower_bound": 0.7963,
-      "removals_outside_the_answer_key": 473,
+      "recall": 0.691,
+      "precision_lower_bound": 0.9387,
+      "f1_lower_bound": 0.7961,
+      "removals_outside_the_answer_key": 474,
       "cross_label_removals": 47,
       "cross_label_pct_of_removals": 0.61,
       "recall_by_type": {
-        "reformat (case/punct.)": 0.9967,
+        "reformat (case/punct.)": 0.996,
         "typos (3% of chars)": 0.2407,
         "drop 15% of words": 0.9533,
-        "replace 15% of words": 0.5393,
-        "truncate to 70%": 0.7967,
-        "swap halves": 1.0,
-        "wrapped in boilerplate": 0.3127
+        "replace 15% of words": 0.5387,
+        "truncate to 70%": 0.7947,
+        "swap halves": 0.9993,
+        "wrapped in boilerplate": 0.3147
       },
       "seconds": null
     },
     "semhash_0.95": {
-      "recall": 0.4534,
-      "precision_lower_bound": 0.9558,
-      "f1_lower_bound": 0.6151,
-      "removals_outside_the_answer_key": 220,
+      "recall": 0.4532,
+      "precision_lower_bound": 0.9556,
+      "f1_lower_bound": 0.6149,
+      "removals_outside_the_answer_key": 221,
       "cross_label_removals": 14,
       "cross_label_pct_of_removals": 0.28,
       "recall_by_type": {
-        "reformat (case/punct.)": 0.996,
+        "reformat (case/punct.)": 0.9953,
         "typos (3% of chars)": 0.0587,
-        "drop 15% of words": 0.736,
-        "replace 15% of words": 0.1687,
+        "drop 15% of words": 0.7367,
+        "replace 15% of words": 0.168,
         "truncate to 70%": 0.1907,
-        "swap halves": 1.0,
+        "swap halves": 0.9993,
         "wrapped in boilerplate": 0.024
       },
       "seconds": null
@@ -291,14 +345,14 @@
       "cross_label_pct_of_removals": 0.54,
       "recall_by_type": {
         "reformat (case/punct.)": 1.0,
-        "typos (3% of chars)": 0.242,
-        "drop 15% of words": 0.9547,
-        "replace 15% of words": 0.5427,
+        "typos (3% of chars)": 0.2433,
+        "drop 15% of words": 0.954,
+        "replace 15% of words": 0.542,
         "truncate to 70%": 0.8427,
         "swap halves": 1.0,
         "wrapped in boilerplate": 0.5673
       },
-      "seconds": 5.76
+      "seconds": 5.15
     },
     "hybrid_two_signal": {
       "recall": 0.6808,
@@ -310,31 +364,67 @@
       "recall_by_type": {
         "reformat (case/punct.)": 1.0,
         "typos (3% of chars)": 0.234,
-        "drop 15% of words": 0.896,
-        "replace 15% of words": 0.518,
+        "drop 15% of words": 0.8967,
+        "replace 15% of words": 0.5187,
         "truncate to 70%": 0.798,
-        "swap halves": 1.0,
+        "swap halves": 0.9987,
         "wrapped in boilerplate": 0.3193
       },
-      "seconds": 6.29
+      "seconds": 5.79
     },
     "hybrid_two_signal_0.85": {
       "recall": 0.8155,
-      "precision_lower_bound": 0.9462,
-      "f1_lower_bound": 0.876,
-      "removals_outside_the_answer_key": 487,
-      "cross_label_removals": 54,
-      "cross_label_pct_of_removals": 0.6,
+      "precision_lower_bound": 0.946,
+      "f1_lower_bound": 0.8759,
+      "removals_outside_the_answer_key": 489,
+      "cross_label_removals": 55,
+      "cross_label_pct_of_removals": 0.61,
       "recall_by_type": {
         "reformat (case/punct.)": 1.0,
-        "typos (3% of chars)": 0.442,
+        "typos (3% of chars)": 0.4427,
         "drop 15% of words": 0.9113,
-        "replace 15% of words": 0.7273,
-        "truncate to 70%": 0.9487,
-        "swap halves": 0.9993,
+        "replace 15% of words": 0.726,
+        "truncate to 70%": 0.95,
+        "swap halves": 0.9987,
         "wrapped in boilerplate": 0.68
       },
-      "seconds": 6.46
+      "seconds": 5.82
+    },
+    "hybrid_cascade_char": {
+      "recall": 0.8898,
+      "precision_lower_bound": 0.9444,
+      "f1_lower_bound": 0.9163,
+      "removals_outside_the_answer_key": 550,
+      "cross_label_removals": 61,
+      "cross_label_pct_of_removals": 0.62,
+      "recall_by_type": {
+        "reformat (case/punct.)": 1.0,
+        "typos (3% of chars)": 0.9087,
+        "drop 15% of words": 0.968,
+        "replace 15% of words": 0.6673,
+        "truncate to 70%": 0.9247,
+        "swap halves": 1.0,
+        "wrapped in boilerplate": 0.76
+      },
+      "seconds": 10.48
+    },
+    "hybrid_two_signal_char": {
+      "recall": 0.8359,
+      "precision_lower_bound": 0.93,
+      "f1_lower_bound": 0.8804,
+      "removals_outside_the_answer_key": 661,
+      "cross_label_removals": 67,
+      "cross_label_pct_of_removals": 0.71,
+      "recall_by_type": {
+        "reformat (case/punct.)": 1.0,
+        "typos (3% of chars)": 0.4707,
+        "drop 15% of words": 0.9853,
+        "replace 15% of words": 0.778,
+        "truncate to 70%": 0.946,
+        "swap halves": 0.9993,
+        "wrapped in boilerplate": 0.672
+      },
+      "seconds": 13.24
     }
   }
 }

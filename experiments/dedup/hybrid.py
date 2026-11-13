@@ -69,7 +69,11 @@ def _semantic_pairs(vectors: np.ndarray, threshold: float) -> tuple[np.ndarray, 
 
 
 def cascade(
-    texts: list[str], jaccard: float = 0.7, cosine: float = 0.9, model: StaticModel | None = None
+    texts: list[str],
+    jaccard: float = 0.7,
+    cosine: float = 0.9,
+    model: StaticModel | None = None,
+    unit: str = "word",
 ) -> HybridResult:
     """Exact -> MinHash-LSH -> semantic pass on the survivors only."""
     model = model or StaticModel.from_pretrained(DEFAULT_MODEL)
@@ -79,7 +83,8 @@ def cascade(
     stages["after_exact"] = int((rep < 0).sum())
 
     alive = np.flatnonzero(rep < 0)
-    signatures, _ = M.featurize([texts[i] for i in alive], shingle_size=3, num_perm=128)
+    size = 3 if unit == "word" else 5
+    signatures, _ = M.featurize([texts[i] for i in alive], shingle_size=size, num_perm=128, unit=unit)
     pi, pj, _ = M.minhash_lsh_pairs(signatures, min_similarity=jaccard)
     lexical = M.greedy_select(len(alive), pi, pj)
     hit = lexical >= 0
@@ -100,7 +105,11 @@ def cascade(
 
 
 def two_signal(
-    texts: list[str], cosine: float = 0.9, min_jaccard: float = 0.3, model: StaticModel | None = None
+    texts: list[str],
+    cosine: float = 0.9,
+    min_jaccard: float = 0.3,
+    model: StaticModel | None = None,
+    unit: str = "word",
 ) -> HybridResult:
     """Remove a record only if a semantic match ALSO shares literal wording."""
     model = model or StaticModel.from_pretrained(DEFAULT_MODEL)
@@ -114,7 +123,8 @@ def two_signal(
     si, sj, score = _semantic_pairs(vectors, cosine)
     stages["semantic_candidate_pairs"] = int(len(si))
 
-    signatures, _ = M.featurize(alive_texts, shingle_size=3, num_perm=128)
+    size = 3 if unit == "word" else 5
+    signatures, _ = M.featurize(alive_texts, shingle_size=size, num_perm=128, unit=unit)
     estimated = np.empty(len(si), dtype=np.float32)
     for lo in range(0, len(si), 200_000):
         hi = lo + 200_000
