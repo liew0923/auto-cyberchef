@@ -25,5 +25,212 @@
     "method_rss_mb": 2.1,
     "removed": 850,
     "records_per_second": 14841
+  },
+  {
+    "method": "charminhash",
+    "n": 10000,
+    "seconds": 2.83,
+    "corpus_rss_mb": 775.4,
+    "method_rss_mb": 120.4,
+    "removed": 945,
+    "records_per_second": 3534
+  },
+  {
+    "method": "simhash",
+    "n": 10000,
+    "seconds": 0.43,
+    "corpus_rss_mb": 775.6,
+    "method_rss_mb": 1.8,
+    "removed": 885,
+    "records_per_second": 23528
+  },
+  {
+    "method": "semhash",
+    "n": 10000,
+    "seconds": 3.44,
+    "corpus_rss_mb": 774.4,
+    "method_rss_mb": 31.6,
+    "removed": 1271,
+    "records_per_second": 2911
+  },
+  {
+    "method": "hybrid_cascade",
+    "n": 10000,
+    "seconds": 4.0,
+    "corpus_rss_mb": 774.4,
+    "method_rss_mb": 31.5,
+    "removed": 1299,
+    "records_per_second": 2499
+  },
+  {
+    "method": "hybrid_cascade_char",
+    "n": 10000,
+    "seconds": 6.04,
+    "corpus_rss_mb": 776.3,
+    "method_rss_mb": 69.0,
+    "removed": 1351,
+    "records_per_second": 1655
+  },
+  {
+    "method": "exact_norm",
+    "n": 50000,
+    "seconds": 0.71,
+    "corpus_rss_mb": 780.7,
+    "method_rss_mb": 0.2,
+    "removed": 5774,
+    "records_per_second": 70077
+  },
+  {
+    "method": "bloom",
+    "n": 50000,
+    "seconds": 0.93,
+    "corpus_rss_mb": 779.8,
+    "method_rss_mb": 0.1,
+    "removed": 5779,
+    "records_per_second": 53597
+  },
+  {
+    "method": "minhash",
+    "n": 50000,
+    "seconds": 3.93,
+    "corpus_rss_mb": 780.0,
+    "method_rss_mb": 4.1,
+    "removed": 5793,
+    "records_per_second": 12734
+  },
+  {
+    "method": "charminhash",
+    "n": 50000,
+    "seconds": 32.82,
+    "corpus_rss_mb": 780.8,
+    "method_rss_mb": 1283.0,
+    "removed": 6333,
+    "records_per_second": 1523
+  },
+  {
+    "method": "simhash",
+    "n": 50000,
+    "seconds": 2.48,
+    "corpus_rss_mb": 780.9,
+    "method_rss_mb": 3.5,
+    "removed": 6050,
+    "records_per_second": 20150
+  },
+  {
+    "method": "semhash",
+    "n": 50000,
+    "seconds": 8.06,
+    "corpus_rss_mb": 780.7,
+    "method_rss_mb": 174.6,
+    "removed": 7835,
+    "records_per_second": 6204
+  },
+  {
+    "method": "hybrid_cascade",
+    "n": 50000,
+    "seconds": 13.11,
+    "corpus_rss_mb": 780.9,
+    "method_rss_mb": 166.7,
+    "removed": 7949,
+    "records_per_second": 3813
+  },
+  {
+    "method": "hybrid_cascade_char",
+    "n": 50000,
+    "seconds": 40.44,
+    "corpus_rss_mb": 780.8,
+    "method_rss_mb": 1282.5,
+    "removed": 8185,
+    "records_per_second": 1236
+  },
+  {
+    "method": "exact_norm",
+    "n": 200000,
+    "seconds": 3.62,
+    "corpus_rss_mb": 792.9,
+    "method_rss_mb": 12.3,
+    "removed": 27841,
+    "records_per_second": 55243
+  },
+  {
+    "method": "bloom",
+    "n": 200000,
+    "seconds": 3.69,
+    "corpus_rss_mb": 793.9,
+    "method_rss_mb": 0.1,
+    "removed": 27846,
+    "records_per_second": 54261
+  },
+  {
+    "method": "minhash",
+    "n": 200000,
+    "seconds": 26.65,
+    "corpus_rss_mb": 794.4,
+    "method_rss_mb": 545.1,
+    "removed": 28022,
+    "records_per_second": 7505
+  },
+  {
+    "method": "charminhash",
+    "n": 200000,
+    "seconds": 152.17,
+    "corpus_rss_mb": 794.7,
+    "method_rss_mb": 3313.0,
+    "removed": 30908,
+    "records_per_second": 1314
+  },
+  {
+    "method": "simhash",
+    "n": 200000,
+    "seconds": 18.27,
+    "corpus_rss_mb": 794.2,
+    "method_rss_mb": 402.8,
+    "removed": 29957,
+    "records_per_second": 10948
+  },
+  {
+    "method": "semhash",
+    "n": 200000,
+    "seconds": 44.4,
+    "corpus_rss_mb": 792.9,
+    "method_rss_mb": 847.0,
+    "removed": 36427,
+    "records_per_second": 4504
+  },
+  {
+    "method": "hybrid_cascade",
+    "n": 200000,
+    "seconds": 65.55,
+    "corpus_rss_mb": 795.7,
+    "method_rss_mb": 924.1,
+    "removed": 36868,
+    "records_per_second": 3050
+  },
+  {
+    "method": "hybrid_cascade_char",
+    "n": 200000,
+    "seconds": 187.34,
+    "corpus_rss_mb": 794.2,
+    "method_rss_mb": 3008.4,
+    "removed": 38031,
+    "records_per_second": 1067
+  },
+  {
+    "method": "exact_norm",
+    "n": 600000,
+    "seconds": 11.0,
+    "corpus_rss_mb": 832.5,
+    "method_rss_mb": 41.7,
+    "removed": 95877,
+    "records_per_second": 54537
+  },
+  {
+    "method": "bloom",
+    "n": 600000,
+    "seconds": 11.71,
+    "corpus_rss_mb": 832.4,
+    "method_rss_mb": 0.1,
+    "removed": 95899,
+    "records_per_second": 51252
   }
 ]
