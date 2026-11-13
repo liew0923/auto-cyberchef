@@ -19,6 +19,7 @@ from pathlib import Path
 import numpy as np
 from datasets import load_dataset
 
+import hybrid
 import methods as M
 from run_experiment import MINHASH_THRESHOLDS, SEMHASH_THRESHOLDS, SIMHASH_DISTANCES, course_methods, semhash_self
 
@@ -100,13 +101,21 @@ def main() -> None:
     kind_arr = np.array(kind)
     is_dup = kind_arr != "base"
 
-    masks, _, _ = course_methods(corpus)
+    masks, _, secs = course_methods(corpus)
     masks.update(semhash_self(corpus)[0])
+    for name, result in (
+        ("hybrid_cascade", hybrid.cascade(corpus)),
+        ("hybrid_two_signal", hybrid.two_signal(corpus)),
+        ("hybrid_two_signal_0.85", hybrid.two_signal(corpus, cosine=0.85)),
+    ):
+        masks[name] = result.removed
+        secs[name] = result.seconds
     wanted = (
         ["exact", "exact_norm"]
         + [f"minhash_{t}" for t in MINHASH_THRESHOLDS]
         + [f"simhash_{k}" for k in SIMHASH_DISTANCES]
         + [f"semhash_{t}" for t in SEMHASH_THRESHOLDS]
+        + ["hybrid_cascade", "hybrid_two_signal", "hybrid_two_signal_0.85"]
     )
     out = {"n_base": N_BASE, "n_injected": int(is_dup.sum()), "perturbations": list(PERTURBATIONS), "methods": {}}
     for method in wanted:
@@ -122,6 +131,7 @@ def main() -> None:
             "recall_by_type": {
                 name: round(float(removed[kind_arr == name].mean()), 4) for name in PERTURBATIONS
             },
+            "seconds": secs.get(method),
         }
         row = out["methods"][method]
         print(f"{method:14s} P={row['precision']:.3f} R={row['recall']:.3f} F1={row['f1']:.3f} FP={fp}")
