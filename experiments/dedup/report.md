@@ -85,6 +85,9 @@ is also World news, so a removed pair whose two labels disagree is a near-certai
 | MinHash ≥ 0.5 | 100 | 15 | 36 | 26 | 84 | 100 | 80 |
 | SemHash ≥ 0.9 | 100 | 24 | 95 | 54 | 80 | 100 | 31 |
 | SemHash ≥ 0.8 | 99 | 66 | 97 | 87 | 95 | 100 | 80 |
+| *Character MinHash ≥ 0.6* | *100* | *91* | *87* | *56* | *80* | *100* | *71* |
+
+(The last row is the fix described in §5, shown here for comparison.)
 
 Four things fall out of this table that the removal counts could never show.
 
@@ -108,7 +111,7 @@ MinHash at 3% and SimHash at 2%: one wrong letter destroys a whole word, and the
 word shingle containing it. That is a flaw in my design choice, not in the technique, so I
 fixed it by shingling characters instead of words — see §5.
 
-## 5. Two hybrid deduplicators
+## 5. Three constructions of my own
 
 The benchmark shows the two families failing in opposite directions: lexical methods miss
 rewrites, the semantic method misses boilerplate and over-removes topic twins. Three
@@ -134,18 +137,33 @@ but share little wording.
 | MinHash ≥ 0.7 | 0.414 | 0.963 | 0.579 | 13 |
 | MinHash ≥ 0.5 | 0.628 | 0.960 | 0.759 | 26 |
 | SemHash ≥ 0.9 | 0.691 | 0.939 | 0.796 | 47 |
-| SemHash ≥ 0.85 | 0.830 | 0.907 | 0.866 | 88 |
-| SemHash ≥ 0.8 | **0.891** | 0.843 | 0.866 | 204 |
-| Cascade | 0.736 | 0.941 | 0.826 | 44 |
-| **Two-signal (cos 0.85)** | 0.816 | 0.946 | **0.876** | 54 |
+| Cascade (word) | 0.736 | 0.941 | 0.826 | 44 |
+| SemHash ≥ 0.85 | 0.830 | 0.907 | 0.867 | 88 |
+| SemHash ≥ 0.8 | 0.892 | 0.843 | 0.867 | 203 |
+| Two-signal (word, cos 0.85) | 0.816 | 0.946 | 0.876 | 55 |
+| Two-signal (char, cos 0.85) | 0.836 | 0.930 | 0.880 | 67 |
+| **Character MinHash ≥ 0.6** | 0.834 | 0.957 | 0.891 | 54 |
+| **Cascade (char)** | **0.890** | **0.944** | **0.916** | 61 |
 
-The two-signal rule gives the best F1 of anything tested. Against SemHash ≥ 0.85, which it most
-resembles in recall, it makes 946 fewer removals outside the answer key and **39% fewer
-label-contradicting removals** (54 vs 88). Against SemHash ≥ 0.8, which beats it on recall by
-7.5 points, it makes a quarter as many label-contradicting removals.
+Two findings here matter more than the ranking.
 
-Requiring two independent signals to agree is a cheap way to buy precision: the lexical check
-costs one MinHash signature comparison per candidate pair the embedding has already proposed.
+**A purely lexical method beats the semantic baseline on this benchmark.** Character-shingle
+MinHash alone reaches F1 0.891 against SemHash's best of 0.867, with no embedding model, no
+neural network and no pretrained weights — just 5-character shingles through the same LSH index.
+Switching the shingle unit from words to characters was worth more than everything else I tried.
+
+**The cascade gets the best of both.** Character MinHash first, then the semantic pass on what
+survives, reaches F1 0.916. It matches SemHash ≥ 0.8 on recall (0.890 vs 0.892) while making
+**a third as many label-contradicting removals** (61 vs 203), because the cheap lexical pass
+removes the easy cases before the embedding — which is the component that over-merges — ever
+sees them.
+
+A caveat that cuts against my own result: every injected duplicate is a *surface* perturbation
+of a source text, so the benchmark rewards methods that track surface form. True paraphrase,
+written independently with different vocabulary, is absent. The one column that approximates it
+— replacing 15% of words with unrelated ones — is the column where SemHash ≥ 0.85 (77%) still
+beats character MinHash ≥ 0.6 (56%). The lexical result is strong for the corruptions that
+dominate real corpora; it is not a claim that embeddings are unnecessary in general.
 
 ## 6. What exactly does SemHash remove that MinHash does not?
 
@@ -241,3 +259,65 @@ clear reason — same-topic stories share a label by construction, which is prec
 where semantic deduplication errs. It is informative in one direction only: ag_news contains
 byte-identical texts carrying contradicting labels, which is annotation noise rather than a
 deduplication finding.
+
+## 9. Conclusions
+
+**1. Removal rate is not a quality metric.** SemHash removes 2.3× more of ag_news than MinHash
+and 1.25× more of wikitext. On ag_news roughly 39% of that excess is lexically-verifiable
+near-duplicates MinHash's threshold missed, and much of the rest is real paraphrase. On
+wikitext the excess is mostly three-token section headings that merely share a topic. The same
+published number means opposite things on the two corpora.
+
+**2. Shingle unit mattered more than algorithm choice.** Moving MinHash from 3-word to
+5-character shingles raised F1 from 0.579 to 0.891 — a bigger gain than switching from lexical
+to semantic matching. It is the cheapest change in this report and the most valuable.
+
+**3. Lexical first, semantic second.** The character cascade reaches F1 0.916 against SemHash's
+best 0.867, with a third of its label-contradicting errors. Running the cheap, precise filter
+before the expensive, permissive one removes the easy cases before the component that
+over-merges can see them.
+
+**4. Deduplication pays when you are already discarding data.** Under a 10% removal rate it
+changes downstream accuracy by nothing measurable. At 24.6% it beats random subsampling of the
+same size by 0.31 points, outside 2σ. That is the regime pretraining pipelines actually operate
+in.
+
+**5. Contamination did not inflate this benchmark.** 18.5% of the ag_news test set duplicates a
+training record by SemHash's reckoning, and the model scores no better on those records than on
+clean ones. Leakage is a memorisation problem, and a 4-way linear classifier has nothing to
+memorise with.
+
+## 10. Limitations
+
+* **The answer key tests corruption, not paraphrase.** Every injected duplicate derives from a
+  source text by surface edits. Independently written paraphrase — where embeddings should
+  dominate — is unrepresented, so the lexical results are stronger here than they would be on a
+  corpus of genuine rewrites.
+* **Precision is a lower bound.** The benchmark base is natural ag_news, so some removals
+  outside the answer key are real duplicates rather than errors. Cross-label removals bound the
+  error from the other side, but neither number is an exact precision.
+* **One downstream task, one model class.** TF-IDF with logistic regression on a 4-way topic
+  task. The leakage conclusion in particular would need rechecking on a generative model.
+* **Approximate indexes throughout.** LSH banding, the 6-block SimHash index and SemHash's
+  approximate-NN search can each miss a pair. The SimHash index is provably exhaustive to 3
+  bits and LSH recall was measured at >95% above Jaccard 0.8, but neither search is exact.
+* **Thresholds are not tuned per corpus.** The same cosine 0.9 and Jaccard 0.7 are applied to
+  120k news snippets and 1.16M wiki lines, which §6 shows to be very different problems.
+
+## 11. Reproducing
+
+```bash
+pip install -r requirements.txt
+python run_experiment.py     # removal rates on both corpora, and the SemHash baseline
+python synthetic_eval.py     # precision / recall against injected duplicates
+python downstream.py         # classifier accuracy, label agreement, train/test leakage
+python control_variance.py   # error bars for the size-controlled comparison
+python error_analysis.py     # what the methods disagree about
+python scaling.py            # runtime and memory against corpus size
+python make_figures.py       # figures
+python -m pytest test_methods.py -q
+```
+
+`test_methods.py` checks each probabilistic structure against the exact quantity it
+approximates: MinHash against true Jaccard on the same shingle sets, the LSH and SimHash
+indexes against brute-force search, and the Bloom filter against a Python set.
