@@ -44,6 +44,8 @@ kept, never to one already removed. Similarity is not transitive, so following c
 a document be deleted because of a document it does not resemble. SemHash's `select_canonicals`
 makes the same choice, so the comparison is like-for-like.
 
+![Share of records removed as duplicates](results/removal_rate.png)
+
 ## 3. How much each method removes
 
 | method | ag_news removed | wikitext removed | wikitext time |
@@ -74,6 +76,8 @@ Precision is reported as a **lower bound**: the base is natural text, so some re
 the answer key may be genuine duplicates ag_news already contained. A second, independent error
 signal avoids that ambiguity — ag_news is labelled, and a true duplicate of a World-news item
 is also World news, so a removed pair whose two labels disagree is a near-certain mistake.
+
+![Recall by kind of edit](results/synthetic_recall.png)
 
 ### Recall by kind of edit (%)
 
@@ -128,6 +132,8 @@ roughly 20× cheaper per record than embedding, so paying it first shrinks the e
 threshold **and** the pair shares literal wording (estimated Jaccard ≥ 0.3). This targets
 SemHash's dominant failure: two different stories about one topic sit close in embedding space
 but share little wording.
+
+![Quality frontier](results/precision_recall.png)
 
 ### Quality frontier on the answer key
 
@@ -211,6 +217,8 @@ TF-IDF + logistic-regression topic classifier on ag_news under each deduplicatio
 Deduplication also *shrinks* the training set, and less data costs accuracy on its own. Every
 deduplicated run is therefore paired with a random subsample of exactly the same size, drawn
 five times so the comparison carries an error bar.
+
+![Downstream accuracy, size-controlled](results/downstream.png)
 
 | training set | size | deduplicated | random subsample | difference |
 |---|---|---|---|---|

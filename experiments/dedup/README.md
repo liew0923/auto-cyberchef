@@ -16,6 +16,8 @@ experiment therefore measures deduplication from four independent angles.
 | Ground-truth benchmark | `synthetic_eval.py` | Precision / recall / F1 against *known* near-duplicates injected with six kinds of edit. |
 | Downstream impact | `downstream.py` | Does deduplication help a classifier, once the loss of training data is controlled for? How much train→test leakage exists? |
 | Cost | `scaling.py` | Wall-clock and peak memory from 10k to 1.16M records. |
+| Error bars | `control_variance.py` | Is the downstream difference real, or one lucky random draw? |
+| Disagreement | `error_analysis.py` | Which records do the methods argue about, and who is right? |
 
 Plus `hybrid.py`, which combines the lexical and semantic signals into two deduplicators of my
 own, and `test_methods.py`, which checks each probabilistic structure against the exact
@@ -28,6 +30,7 @@ quantity it approximates.
 | Exact hashing | byte-identical, or identical after Unicode/case/punctuation normalisation | SHA-1 of the (normalised) text |
 | Bloom filter | the same, in fixed memory | `m = -n·ln(p)/ln²2` bits, `k` hash functions by double hashing |
 | MinHash + LSH | near-duplicates by **Jaccard** of 3-word shingles | 128 permutations, banded into 21 bands × 6 rows; a shared band is a candidate |
+| Character MinHash | near-duplicates **through typos** | the same index over 5-character shingles, which survive letter-level corruption |
 | SimHash | near-duplicates by **Hamming** distance of a 64-bit fingerprint | bit-wise voting over token hashes; a 6-block permutation index finds every pair within 3 bits |
 | SemHash (baseline) | **semantic** duplicates | static `potion-base-8M` embeddings + approximate-NN search over cosine similarity |
 
@@ -43,6 +46,17 @@ are featurised in a single pass rather than in a Python loop.
   the pair shares literal wording (estimated Jaccard ≥ 0.3). This targets the dominant SemHash
   failure mode: two different news stories about the same topic sit close in embedding space
   but share almost no wording.
+
+## Headline results
+
+* Character-shingle MinHash alone reaches **F1 ≥ 0.891** on the answer key, against SemHash's
+  best of 0.867 — with no embedding model at all.
+* The character cascade reaches **F1 ≥ 0.916**, matching SemHash ≥ 0.8 on recall while making a
+  third as many label-contradicting removals.
+* Deduplication beats an equal-size random subsample **only** when removal is aggressive:
+  +0.31 points at 24.6% removed (beyond 2σ), nothing measurable below 10%.
+* 18.5% of the ag_news test set duplicates a training record, and the classifier scores **no
+  better** on those records than on clean ones.
 
 ## Reproducing
 
