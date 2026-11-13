@@ -1,4 +1,11 @@
-datasets
-semhash
-numpy
-matplotlib
+# Versions used for the results in report.md (Python 3.13).
+# Core methods need only numpy; the rest are the SemHash baseline, data loading and evaluation.
+datasets==5.2.0
+semhash==0.5.0
+model2vec==0.10.0
+vicinity==0.4.6
+usearch==2.26.6
+numpy==2.5.3
+scikit-learn==1.9.1
+matplotlib==3.11.2
+pytest==9.2.0

@@ -1,0 +1,20 @@
+[
+  {
+    "method": "exact_norm",
+    "n": 10000,
+    "seconds": 0.17,
+    "corpus_rss_mb": 776.3,
+    "method_rss_mb": 0.2,
+    "removed": 845,
+    "records_per_second": 59613
+  },
+  {
+    "method": "bloom",
+    "n": 10000,
+    "seconds": 0.22,
+    "corpus_rss_mb": 775.5,
+    "method_rss_mb": 0.1,
+    "removed": 847,
+    "records_per_second": 46343
+  }
+]
