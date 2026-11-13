@@ -317,7 +317,11 @@ code { font-family: var(--font-data); font-size: 0.84em; background: var(--raise
     </div>
     <p>Nothing here is disqualified by its asymptotics. Over the top three corpus sizes the log–log slopes are 1.07 for character MinHash, 1.12 for word MinHash and 1.14 for SemHash: LSH and approximate-NN both keep candidate generation near-linear, and what separates the methods is a constant factor of about 60×. The exception is SimHash at 1.32 — its block index returns more candidates as the fingerprint space fills, and wikitext's short section headings collide heavily.</p>
     <p>Memory tells a different story from runtime. Every near-duplicate method sits between 4.8 and 6.4&nbsp;GB above the corpus, because all of them materialise per-record signatures and a candidate-pair list. The Bloom filter uses <strong>3&nbsp;MB</strong> — the one line of this table that would still hold at a hundred times the corpus size, and the reason the structure exists at all.</p>
-    <p class="note">The practical reading: below roughly 100,000 records the cost column is irrelevant and accuracy should decide. Above a few million, these constants decide for you — and the cascade's ordering is the argument in its favour, since its lexical stage clears a sixth of the corpus before anything is embedded, making its semantic stage strictly cheaper than running SemHash alone.</p>
+    <p class="note">The practical reading: below roughly 100,000 records the cost column is irrelevant and accuracy should decide. Above a few million, these constants decide for you — and the cascade's ordering is the argument in its favour, since its lexical stage clears 18.11% of the corpus before anything is embedded, making its semantic stage strictly cheaper than running SemHash alone.</p>
+    <div class="panel">
+      <h3>Where the cascade's saving actually comes from</h3>
+      <p>Instrumenting the stage boundaries qualifies that argument. Of the 210,977 records the word cascade clears before embedding, exact normalised hashing accounts for <strong>205,298</strong> and MinHash for <strong>5,679</strong> — the saving is nearly free, and nearly none of it comes from the expensive stage. The character variant earns more from its lexical pass (30,498 extra records, 20.24% saved) but spends 957 of its 1,234 seconds getting there. On a corpus with this much byte-identical repetition the right cascade is exact-then-semantic: the MinHash stage justifies itself by what it <em>catches</em>, not by what it saves.</p>
+    </div>
   </div>
 </section>
 

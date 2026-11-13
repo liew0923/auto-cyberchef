@@ -1,0 +1,24 @@
+{
+  "word": {
+    "after_exact": 959731,
+    "after_minhash": 954052,
+    "seconds_lexical": 147.33,
+    "after_semantic": 897379,
+    "embedded_records": 954052,
+    "embedding_saved_pct": 18.11,
+    "total_seconds": 426.59,
+    "removed": 267650,
+    "n": 1165029
+  },
+  "char": {
+    "after_exact": 959731,
+    "after_minhash": 929233,
+    "seconds_lexical": 956.84,
+    "after_semantic": 888801,
+    "embedded_records": 929233,
+    "embedding_saved_pct": 20.24,
+    "total_seconds": 1234.41,
+    "removed": 276228,
+    "n": 1165029
+  }
+}

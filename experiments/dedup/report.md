@@ -336,11 +336,21 @@ need sharding by LSH band — a limitation of this implementation, not of the al
 The cascade's extra accuracy is not free: it costs 1.4× SemHash in the word variant and 3.7× in
 the character variant. For a corpus you deduplicate once, that is irrelevant — 21 minutes on one
 core for 1.16M records. For a pipeline reprocessing a corpus repeatedly, the ordering is the
-argument: the cascade's lexical stage removes 18% of the corpus before anything is embedded, so
-its semantic stage is strictly cheaper than running SemHash alone, and the difference grows with
-how duplicated the corpus is. The honest summary is that below ~100k records the cost column
-does not matter and accuracy should decide; above a few million, the constant factors in this
-table decide for you.
+argument: the cascade's lexical stage removes 18.11% of wikitext before anything is embedded
+(20.24% for the character variant), so its semantic stage is strictly cheaper than running
+SemHash alone.
+
+Instrumenting the stage boundaries qualifies that argument, though. Of the 210,977 records the
+word cascade clears before embedding, exact normalised hashing accounts for 205,298 and MinHash
+for only 5,679 — the saving is almost entirely free, and almost none of it comes from the
+expensive stage. The character variant earns more from its lexical pass (30,498 extra records,
+20.24% saved) but spends 957 s of its 1,234 s total getting there, so it buys a 2-percentage-point
+larger discount on embedding for roughly six times the lexical cost. On a corpus with this much
+byte-identical repetition, the right cascade is exact-then-semantic; the MinHash stage justifies
+itself by what it catches, not by what it saves.
+
+The honest summary is that below ~100k records the cost column does not matter and accuracy
+should decide; above a few million, the constant factors in this table decide for you.
 
 ## 9. Conclusions
 
