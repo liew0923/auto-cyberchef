@@ -98,53 +98,91 @@ class _Vocab(dict):
         return value
 
 
-def _shingle_hashes(texts: list[str], vocab: _Vocab, n: int) -> tuple[np.ndarray, np.ndarray]:
-    """Return 64-bit hashes of the word n-gram shingles of each text.
+def _rolling_hashes(
+    ids: np.ndarray, lengths: np.ndarray, n: int
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Hash every length-n window of each document's symbol sequence.
 
-    Output is a flat array of hashes plus the start offset of every document.
-    Every document yields at least one shingle: texts shorter than ``n`` tokens
-    become a single shingle, and texts without any token share a constant one.
+    ``ids`` is the concatenation of all documents' symbols and ``lengths`` their sizes. Windows
+    are taken over the whole flat array and then masked so none spans a document boundary,
+    which keeps the work in one vectorised pass instead of a Python loop per document. A
+    document shorter than ``n`` contributes a single window covering all of it, so every
+    document always has at least one shingle.
     """
-    ids, lens = array("q"), []
-    for text in texts:
-        tokens = TOKEN_RE.findall(text.lower())
-        lens.append(len(tokens))
-        ids.extend(map(vocab.__getitem__, tokens))
-    lengths = np.asarray(lens, dtype=np.int64)
-    n_docs, total = len(texts), int(lengths.sum())
-    token_hash = mix64(np.frombuffer(ids, dtype=np.int64).astype(U64) + _GOLD)
+    n_docs, total = len(lengths), int(lengths.sum())
+    symbol_hash = mix64(ids.astype(U64) + _GOLD)
     doc_of_pos = np.repeat(np.arange(n_docs, dtype=np.int64), lengths)
     mult = mix64(np.arange(1, n + 1, dtype=U64))
 
     values, owners = [], []
-    if total >= n:  # full n-grams that do not cross a document boundary
+    if total >= n:
         acc = np.zeros(total - n + 1, dtype=U64)
         for q in range(n):
-            acc += token_hash[q : total - n + 1 + q] * mult[q]
+            acc += symbol_hash[q : total - n + 1 + q] * mult[q]
         valid = doc_of_pos[: total - n + 1] == doc_of_pos[n - 1 :]
         values.append(mix64(acc[valid]))
         owners.append(doc_of_pos[: total - n + 1][valid])
 
-    short = lengths < n  # one shingle for each short document
+    short = lengths < n
     short_acc = np.zeros(n_docs, dtype=U64)
     if total:
         starts = np.cumsum(lengths) - lengths
         in_short = short[doc_of_pos]
         pos_in_doc = (np.arange(total) - starts[doc_of_pos])[in_short]
-        np.add.at(short_acc, doc_of_pos[in_short], token_hash[in_short] * mult[pos_in_doc])
+        np.add.at(short_acc, doc_of_pos[in_short], symbol_hash[in_short] * mult[pos_in_doc])
     values.append(mix64(short_acc[short] + _GOLD))
     owners.append(np.flatnonzero(short))
 
     values, owners = np.concatenate(values), np.concatenate(owners)
     order = np.argsort(owners, kind="stable")
-    counts = np.where(short, 1, lengths - n + 1)
-    return values[order], np.cumsum(counts) - counts
+    counts = np.where(short, 1, np.maximum(lengths - n + 1, 1))
+    return values[order], np.cumsum(counts) - counts, counts
+
+
+def _word_shingles(texts: list[str], vocab: _Vocab, n: int) -> tuple[np.ndarray, np.ndarray]:
+    """Hashes of the word n-gram shingles of each text, plus each document's start offset."""
+    ids, lens = array("q"), []
+    for text in texts:
+        tokens = TOKEN_RE.findall(text.lower())
+        lens.append(len(tokens))
+        ids.extend(map(vocab.__getitem__, tokens))
+    flat = np.frombuffer(ids, dtype=np.int64) if len(ids) else np.zeros(0, dtype=np.int64)
+    values, starts, _ = _rolling_hashes(flat, np.asarray(lens, dtype=np.int64), n)
+    return values, starts
+
+
+def _char_shingles(texts: list[str], n: int) -> tuple[np.ndarray, np.ndarray]:
+    """Hashes of the character n-gram shingles of the normalised text.
+
+    Character shingles survive the typos and inflections that break word shingles: one wrong
+    letter damages n windows instead of destroying a whole token.
+    """
+    buffers, lens = [], []
+    for text in texts:
+        codes = np.frombuffer(normalize(text).encode("utf-8", "ignore"), dtype=np.uint8)
+        buffers.append(codes)
+        lens.append(len(codes))
+    flat = np.concatenate(buffers).astype(np.int64) if buffers else np.zeros(0, dtype=np.int64)
+    values, starts, _ = _rolling_hashes(flat, np.asarray(lens, dtype=np.int64), n)
+    return values, starts
 
 
 def featurize(
-    texts: list[str], shingle_size: int = 3, num_perm: int = 128, seed: int = 0, chunk: int = 100_000
+    texts: list[str],
+    shingle_size: int = 3,
+    num_perm: int = 128,
+    seed: int = 0,
+    chunk: int = 100_000,
+    unit: str = "word",
 ) -> tuple[np.ndarray, np.ndarray]:
-    """Compute MinHash signatures (n, num_perm) uint32 and 64-bit SimHash fingerprints for all texts."""
+    """Compute MinHash signatures (n, num_perm) uint32 and 64-bit SimHash fingerprints for all texts.
+
+    :param unit: ``"word"`` shingles n consecutive words, ``"char"`` n consecutive characters of
+        the normalised text. Character shingles cost more to build but survive typos, which
+        destroy whole tokens and therefore whole word shingles.
+    """
+    if unit not in ("word", "char"):
+        raise ValueError("unit must be 'word' or 'char'")
     rng = np.random.default_rng(seed)
     a = rng.integers(0, 2**64, size=num_perm, dtype=U64) | U64(1)
     b = rng.integers(0, 2**64, size=num_perm, dtype=U64)
@@ -152,7 +190,11 @@ def featurize(
     fingerprints = np.zeros(len(texts), dtype=U64)
     vocab = _Vocab()
     for lo in range(0, len(texts), chunk):
-        hashes, starts = _shingle_hashes(texts[lo : lo + chunk], vocab, shingle_size)
+        batch = texts[lo : lo + chunk]
+        if unit == "word":
+            hashes, starts = _word_shingles(batch, vocab, shingle_size)
+        else:
+            hashes, starts = _char_shingles(batch, shingle_size)
         hi = lo + len(starts)
         # MinHash: minimum of each random hash function over the document's shingle set.
         for k in range(num_perm):

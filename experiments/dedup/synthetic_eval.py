@@ -33,7 +33,14 @@ from datasets import load_dataset
 
 import hybrid
 import methods as M
-from run_experiment import MINHASH_THRESHOLDS, SEMHASH_THRESHOLDS, SIMHASH_DISTANCES, course_methods, semhash_self
+from run_experiment import (
+    CHAR_THRESHOLDS,
+    MINHASH_THRESHOLDS,
+    SEMHASH_THRESHOLDS,
+    SIMHASH_DISTANCES,
+    course_methods,
+    semhash_self,
+)
 
 RESULTS = Path(__file__).parent / "results"
 N_BASE, N_PER_TYPE, SEED = 20_000, 1_500, 13
@@ -141,6 +148,7 @@ def main() -> None:
     wanted = (
         ["exact", "exact_norm"]
         + [f"minhash_{t}" for t in MINHASH_THRESHOLDS]
+        + [f"charminhash_{t}" for t in CHAR_THRESHOLDS]
         + [f"simhash_{k}" for k in SIMHASH_DISTANCES]
         + [f"semhash_{t}" for t in SEMHASH_THRESHOLDS]
         + ["hybrid_cascade", "hybrid_two_signal", "hybrid_two_signal_0.85"]

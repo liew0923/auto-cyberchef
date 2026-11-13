@@ -17,6 +17,7 @@ import methods as M
 
 RESULTS = Path(__file__).parent / "results"
 MINHASH_THRESHOLDS = (0.5, 0.6, 0.7, 0.8, 0.9)
+CHAR_THRESHOLDS = (0.6, 0.7, 0.8)
 SIMHASH_DISTANCES = (0, 1, 2, 3)
 SEMHASH_THRESHOLDS = (0.8, 0.85, 0.9, 0.95)
 MAIN = {"minhash": 0.7, "simhash": 3, "semhash": 0.9}
@@ -68,6 +69,19 @@ def course_methods(texts: list[str]) -> tuple[dict, dict, dict]:
             ok = sim >= th
             reps[f"minhash_{th}"] = expand(M.greedy_select(len(unique), pi[ok], pj[ok]), unique_idx, exact_rep)
         secs[f"minhash_{th}"] = round(secs["exact"] + secs["minhash_index"] + t.seconds, 2)
+
+    # Character-shingle MinHash: same machinery, 5-character shingles instead of 3-word ones.
+    # Word shingles are destroyed by a single wrong letter; character shingles are only dented.
+    with Timer() as t:
+        char_signatures = M.featurize(unique, shingle_size=5, num_perm=128, unit="char")[0]
+        ci, cj, csim = M.minhash_lsh_pairs(char_signatures, min_similarity=min(CHAR_THRESHOLDS))
+    secs["charminhash_index"] = t.seconds
+    del char_signatures
+    for th in CHAR_THRESHOLDS:
+        with Timer() as t:
+            ok = csim >= th
+            reps[f"charminhash_{th}"] = expand(M.greedy_select(len(unique), ci[ok], cj[ok]), unique_idx, exact_rep)
+        secs[f"charminhash_{th}"] = round(secs["exact"] + secs["charminhash_index"] + t.seconds, 2)
 
     with Timer() as t:
         _, fingerprints = M.featurize(unique, shingle_size=1, num_perm=0)

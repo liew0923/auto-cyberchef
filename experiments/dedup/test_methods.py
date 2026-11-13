@@ -157,3 +157,24 @@ def test_greedy_select_is_order_independent_in_its_output_shape() -> None:
     rep = M.greedy_select(4, np.array([p[0] for p in pairs]), np.array([p[1] for p in pairs]))
     assert rep[0] == -1 and rep[1] == -1
     assert rep[2] == 0 and rep[3] == 0
+
+
+def test_character_shingles_survive_typos() -> None:
+    """One wrong letter destroys a whole word shingle but only dents a character shingle."""
+    clean = "the quick brown fox jumps over the lazy dog near the river bank"
+    typo = "the quikc brown fox jumps over the lasy dog near the river bank"
+    unrelated = "quarterly earnings rose sharply across european banking stocks"
+    texts = [clean, typo, unrelated]
+
+    word = M.featurize(texts, shingle_size=3, num_perm=256, unit="word")[0]
+    char = M.featurize(texts, shingle_size=5, num_perm=256, unit="char")[0]
+    word_similarity = float((word[0] == word[1]).mean())
+    char_similarity = float((char[0] == char[1]).mean())
+
+    assert char_similarity > word_similarity + 0.2, "character shingles should be far more typo-tolerant"
+    assert float((char[0] == char[2]).mean()) < 0.2, "and must still separate unrelated texts"
+
+
+def test_unknown_shingle_unit_is_rejected() -> None:
+    with pytest.raises(ValueError):
+        M.featurize(["text"], unit="sentence")
