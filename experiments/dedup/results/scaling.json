@@ -16,5 +16,14 @@
     "method_rss_mb": 0.1,
     "removed": 847,
     "records_per_second": 46343
+  },
+  {
+    "method": "minhash",
+    "n": 10000,
+    "seconds": 0.67,
+    "corpus_rss_mb": 775.4,
+    "method_rss_mb": 2.1,
+    "removed": 850,
+    "records_per_second": 14841
   }
 ]
