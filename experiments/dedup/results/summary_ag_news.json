@@ -1,0 +1,207 @@
+{
+  "dataset": "ag_news",
+  "n_records": 120000,
+  "methods": {
+    "bloom": {
+      "removed": 231,
+      "kept": 119769,
+      "removed_pct": 0.193,
+      "seconds": 1.48
+    },
+    "exact": {
+      "removed": 0,
+      "kept": 120000,
+      "removed_pct": 0.0,
+      "seconds": 0.11
+    },
+    "exact_norm": {
+      "removed": 218,
+      "kept": 119782,
+      "removed_pct": 0.182,
+      "seconds": 1.18
+    },
+    "minhash_0.5": {
+      "removed": 8081,
+      "kept": 111919,
+      "removed_pct": 6.734,
+      "seconds": 5.68
+    },
+    "minhash_0.6": {
+      "removed": 7012,
+      "kept": 112988,
+      "removed_pct": 5.843,
+      "seconds": 5.68
+    },
+    "minhash_0.7": {
+      "removed": 5190,
+      "kept": 114810,
+      "removed_pct": 4.325,
+      "seconds": 5.68
+    },
+    "minhash_0.8": {
+      "removed": 3157,
+      "kept": 116843,
+      "removed_pct": 2.631,
+      "seconds": 5.68
+    },
+    "minhash_0.9": {
+      "removed": 702,
+      "kept": 119298,
+      "removed_pct": 0.585,
+      "seconds": 5.68
+    },
+    "charminhash_0.6": {
+      "removed": 11167,
+      "kept": 108833,
+      "removed_pct": 9.306,
+      "seconds": 36.83
+    },
+    "charminhash_0.7": {
+      "removed": 8777,
+      "kept": 111223,
+      "removed_pct": 7.314,
+      "seconds": 36.83
+    },
+    "charminhash_0.8": {
+      "removed": 6176,
+      "kept": 113824,
+      "removed_pct": 5.147,
+      "seconds": 36.83
+    },
+    "simhash_0": {
+      "removed": 305,
+      "kept": 119695,
+      "removed_pct": 0.254,
+      "seconds": 3.28
+    },
+    "simhash_1": {
+      "removed": 582,
+      "kept": 119418,
+      "removed_pct": 0.485,
+      "seconds": 3.28
+    },
+    "simhash_2": {
+      "removed": 1086,
+      "kept": 118914,
+      "removed_pct": 0.905,
+      "seconds": 3.28
+    },
+    "simhash_3": {
+      "removed": 1857,
+      "kept": 118143,
+      "removed_pct": 1.547,
+      "seconds": 3.28
+    },
+    "semhash_0.9": {
+      "removed": 12128,
+      "kept": 107872,
+      "removed_pct": 10.107,
+      "seconds": 20.32
+    },
+    "semhash_0.95": {
+      "removed": 6200,
+      "kept": 113800,
+      "removed_pct": 5.167,
+      "seconds": 21.35
+    },
+    "semhash_0.8": {
+      "removed": 29544,
+      "kept": 90456,
+      "removed_pct": 24.62,
+      "seconds": 21.67
+    },
+    "semhash_0.85": {
+      "removed": 19472,
+      "kept": 100528,
+      "removed_pct": 16.227,
+      "seconds": 23.24
+    }
+  },
+  "timing_detail": {
+    "exact": 0.11,
+    "exact_norm": 1.18,
+    "bloom": 1.48,
+    "bloom_bytes": 215664,
+    "minhash_index": 5.57,
+    "minhash_0.5": 5.68,
+    "minhash_0.6": 5.68,
+    "minhash_0.7": 5.68,
+    "minhash_0.8": 5.68,
+    "minhash_0.9": 5.68,
+    "charminhash_index": 36.72,
+    "charminhash_0.6": 36.83,
+    "charminhash_0.7": 36.83,
+    "charminhash_0.8": 36.83,
+    "simhash_index": 3.17,
+    "simhash_0": 3.28,
+    "simhash_1": 3.28,
+    "simhash_2": 3.28,
+    "simhash_3": 3.28,
+    "semhash_index": 13.06,
+    "semhash_0.9": 20.32,
+    "semhash_0.95": 21.35,
+    "semhash_0.8": 21.67,
+    "semhash_0.85": 23.24
+  },
+  "bloom_false_positives": 13,
+  "overlap": {
+    "minhash_0.7|semhash_0.9": {
+      "both": 4983,
+      "only_first": 207,
+      "only_second": 7145
+    },
+    "simhash_3|semhash_0.9": {
+      "both": 1815,
+      "only_first": 42,
+      "only_second": 10313
+    },
+    "minhash_0.7|simhash_3": {
+      "both": 1660,
+      "only_first": 3530,
+      "only_second": 197
+    },
+    "exact_norm|semhash_0.9": {
+      "both": 218,
+      "only_first": 0,
+      "only_second": 11910
+    }
+  },
+  "examples": {
+    "semhash_only": [
+      {
+        "removed": "Stocks Sag as Colgate Warns, Oil Jumps  NEW YORK (Reuters) - Stocks fell on Monday as warnings of  lower earnings from consumer goods giants Colgate-Palmolive and  Unilever weighed on markets.",
+        "duplicate_of": "Stocks Slip After Colgate Warns  NEW YORK (Reuters) - Stocks fell on Monday as warnings of  lower earnings from consumer goods giants Colgate-Palmolive and  Unilever weighed on markets."
+      },
+      {
+        "removed": "FCC approves broadband over power line rules The US Federal Communications Commission (FCC) has cleared the way for power companies to roll out broadband over power line service by approving a set of rules designed to limit interference to other radio frequency devices.",
+        "duplicate_of": "FCC approves BPL interference rules The U.S. Federal Communications Commission (FCC) on Thursday cleared the way for power companies to roll out broadband over power line service by approving a set of rules designed to limit interference to other radio frequency devices such as amateur radios."
+      },
+      {
+        "removed": "Telekom Austria Plans to Buy Mobiltel for \\$1.5 Bln (Update7) Telekom Austria AG plans to buy Bulgaria #39;s largest wireless company, MobilTel EAD, for 1.15 billion euros (\\$1.5 billion), adding 3 million subscribers in a nation where less than half the population has a cellular phone.",
+        "duplicate_of": "Telekom Austria Wins Mobiltel Bid Option for \\$2.1 Bln (Update2) Telekom Austria AG, the country #39;s biggest phone operator, won the right to buy Bulgaria #39;s largest mobile phone company, MobilTel EAD, for 1.6 billion euros (\\$2.1 billion), an acquisition that would add 3 million subscribers."
+      },
+      {
+        "removed": "Stocks surge on news about oil prices Stocks rose sharply yesterday, extending their rally for a second session as investors expressed relief over plummeting oil prices following a government report that showed a buildup in crude inventories.",
+        "duplicate_of": "Stocks extend rally for a second session NEW YORK - Stocks rose sharply Wednesday, extending their rally for a second session as investors expressed relief over plummeting oil prices following a government report that showed a buildup in crude inventories."
+      }
+    ],
+    "minhash_only": [
+      {
+        "removed": "Security threats outside the PC Most IT Managers won #39;t question the importance of security, but this priority has been sliding between the third and fourth most important focus for companies.",
+        "duplicate_of": "McAfee aims at small firms with e-mail service Most IT Managers won #39;t question the importance of security, but this priority has been sliding between the third and fourth most important focus for companies."
+      },
+      {
+        "removed": "BlackBerry, Bluetooth Miss a Shot to Move Into More Hands these two uses of wireless technology have remained stubbornly irrelevant to many mainstream users, despite the benefits they might offer and the hype they often get in the press.",
+        "duplicate_of": "BlackBerry, Bluetooth Miss a Shot to Move Into More Hands (washingtonpost.com) washingtonpost.com - BlackBerrys and Bluetooth share an embarrassing trait -- these two uses of wireless technology have remained stubbornly irrelevant to many mainstream users, despite the benefits they might offer and t"
+      },
+      {
+        "removed": "Iraqi Troops Raid Baghdad Mosque, 17 Detained (Reuters) Reuters - Hundreds of Iraqi troops backed by U.S.\\forces stormed a Sunni Muslim mosque in Baghdad after Friday\\prayers, killing four people and wounding at least nine,\\witnesses and an influential group of Sunni clerics said.",
+        "duplicate_of": "Iraqi Troops Raid Baghdad Mosque, 17 Detained Hundreds of Iraqi troops backed by US forces stormed a Sunni Muslim mosque in Baghdad after Friday prayers, killing four people and wounding at least nine, witnesses and an influential group of Sunni clerics said."
+      },
+      {
+        "removed": "Typhoon kills 66 in Japan, deadliest in 22 years Japan #39;s deadliest typhoon in more than two decades killed 66 people, news reports said on Thursday as rescuers searched frantically for 22 still missing in floods and landslides.",
+        "duplicate_of": "Typhoon Kills 66 in Japan, Deadliest in 22 Years  TOKYO (Reuters) - Japan's deadliest typhoon in more than  two decades killed 66 people, news reports said on Thursday as  rescuers searched frantically for 22 still missing in floods  and landslides."
+      }
+    ]
+  }
+}
