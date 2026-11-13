@@ -1,0 +1,185 @@
+{
+  "dataset": "wikitext",
+  "n_records": 1165029,
+  "methods": {
+    "bloom": {
+      "removed": 205330,
+      "kept": 959699,
+      "removed_pct": 17.624,
+      "seconds": 23.13
+    },
+    "exact": {
+      "removed": 191616,
+      "kept": 973413,
+      "removed_pct": 16.447,
+      "seconds": 1.77
+    },
+    "exact_norm": {
+      "removed": 205298,
+      "kept": 959731,
+      "removed_pct": 17.622,
+      "seconds": 18.54
+    },
+    "minhash_0.5": {
+      "removed": 216804,
+      "kept": 948225,
+      "removed_pct": 18.609,
+      "seconds": 122.65
+    },
+    "minhash_0.6": {
+      "removed": 213933,
+      "kept": 951096,
+      "removed_pct": 18.363,
+      "seconds": 122.64
+    },
+    "minhash_0.7": {
+      "removed": 210976,
+      "kept": 954053,
+      "removed_pct": 18.109,
+      "seconds": 122.64
+    },
+    "minhash_0.8": {
+      "removed": 208390,
+      "kept": 956639,
+      "removed_pct": 17.887,
+      "seconds": 122.64
+    },
+    "minhash_0.9": {
+      "removed": 206561,
+      "kept": 958468,
+      "removed_pct": 17.73,
+      "seconds": 122.64
+    },
+    "simhash_0": {
+      "removed": 207090,
+      "kept": 957939,
+      "removed_pct": 17.776,
+      "seconds": 97.89
+    },
+    "simhash_1": {
+      "removed": 209642,
+      "kept": 955387,
+      "removed_pct": 17.995,
+      "seconds": 97.89
+    },
+    "simhash_2": {
+      "removed": 217378,
+      "kept": 947651,
+      "removed_pct": 18.659,
+      "seconds": 97.9
+    },
+    "simhash_3": {
+      "removed": 234578,
+      "kept": 930451,
+      "removed_pct": 20.135,
+      "seconds": 97.94
+    },
+    "semhash_0.9": {
+      "removed": 264450,
+      "kept": 900579,
+      "removed_pct": 22.699,
+      "seconds": 464.35
+    },
+    "semhash_0.95": {
+      "removed": 225616,
+      "kept": 939413,
+      "removed_pct": 19.366,
+      "seconds": 471.65
+    },
+    "semhash_0.8": {
+      "removed": 395602,
+      "kept": 769427,
+      "removed_pct": 33.956,
+      "seconds": 566.81
+    },
+    "semhash_0.85": {
+      "removed": 317374,
+      "kept": 847655,
+      "removed_pct": 27.242,
+      "seconds": 598.72
+    }
+  },
+  "timing_detail": {
+    "exact": 1.77,
+    "exact_norm": 18.54,
+    "bloom": 23.13,
+    "bloom_bytes": 2093789,
+    "minhash_index": 120.86,
+    "minhash_0.5": 122.65,
+    "minhash_0.6": 122.64,
+    "minhash_0.7": 122.64,
+    "minhash_0.8": 122.64,
+    "minhash_0.9": 122.64,
+    "simhash_index": 96.11,
+    "simhash_0": 97.89,
+    "simhash_1": 97.89,
+    "simhash_2": 97.9,
+    "simhash_3": 97.94,
+    "semhash_index": 330.87,
+    "semhash_0.9": 464.35,
+    "semhash_0.95": 471.65,
+    "semhash_0.8": 566.81,
+    "semhash_0.85": 598.72
+  },
+  "bloom_false_positives": 32,
+  "overlap": {
+    "minhash_0.7|semhash_0.9": {
+      "both": 206996,
+      "only_first": 3980,
+      "only_second": 57454
+    },
+    "simhash_3|semhash_0.9": {
+      "both": 206607,
+      "only_first": 27971,
+      "only_second": 57843
+    },
+    "minhash_0.7|simhash_3": {
+      "both": 207770,
+      "only_first": 3206,
+      "only_second": 26808
+    },
+    "exact_norm|semhash_0.9": {
+      "both": 201909,
+      "only_first": 3389,
+      "only_second": 62541
+    }
+  },
+  "examples": {
+    "semhash_only": [
+      {
+        "removed": " = = Campaign development = = \n",
+        "duplicate_of": " = = Campaign = = \n"
+      },
+      {
+        "removed": " = = = Diamond Jubilee = = = \n",
+        "duplicate_of": " = = = Diamond = = = \n"
+      },
+      {
+        "removed": " = = = Agni 's Philosophy = = = \n",
+        "duplicate_of": " = = = = Agni = = = = \n"
+      },
+      {
+        "removed": " She sailed later that month for the Mediterranean , but , once she reached Gibraltar , she was diverted to Freetown , Sierra Leone to search for German commerce raiders . The ship was transferred to the North America and West Indies Station in October and was refitted in Sheerness between 18 Januar",
+        "duplicate_of": " The ship sailed to Freetown , Sierra Leone on 30 August and arrived on 4 September to search for German commerce raiders . She was transferred back to the UK in November for a more thorough refit at Sheerness between 18 December and 23 March 1940 . In the meantime , the 2nd Destroyer Flotilla had b"
+      }
+    ],
+    "minhash_only": [
+      {
+        "removed": " WWA World Tag Team Championship ( 1 time ) \n",
+        "duplicate_of": " World Tag Team Championship ( 1 time ) \n"
+      },
+      {
+        "removed": " A2 . \" Luxurious \" ( Album Version ) – 4 : 24 \n",
+        "duplicate_of": " \" Luxurious \" ( Album Version ) – 4 : 24 \n"
+      },
+      {
+        "removed": " Lárus was sentenced to 9 months in prison by the District Court of Reykjavík for a major breach of trust . Out of the 9 months , 6 were suspended for 2 years . The Supreme Court of Iceland acquitted Lárus . \n",
+        "duplicate_of": " Guðmundur was sentenced to 9 months in prison by the District Court of Reykjavík for a major breach of trust . Out of the 9 months , 6 were suspended for 2 years . The Supreme Court of Iceland acquitted Guðmundur . \n"
+      },
+      {
+        "removed": " World Tag Team Championship ( 1 time ) – with Brian Kendrick \n",
+        "duplicate_of": " ICW Tag Team Championship ( 1 time ) – with Brian Kendrick \n"
+      }
+    ]
+  }
+}
