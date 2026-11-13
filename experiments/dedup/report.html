@@ -1,0 +1,312 @@
+<title>Duplicate Hunting in ag_news</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<style>
+/* Layout: single measured column of prose, with data blocks breaking out to full width. */
+:root {
+  --surface: #fcfcfb;
+  --raised: #f4f4f1;
+  --ink: #15161a;
+  --ink-soft: #55565d;
+  --ink-faint: #8a8b92;
+  --rule: #e2e2dd;
+  --word: #2a78d6;
+  --char: #6250d6;
+  --sem: #eb6834;
+  --hybrid: #1baf7a;
+  --font-head: "IBM Plex Sans", system-ui, sans-serif;
+  --font-body: "Source Serif 4", Georgia, serif;
+  --font-data: "IBM Plex Mono", ui-monospace, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --surface: #16171a; --raised: #1f2025; --ink: #f2f2ef; --ink-soft: #b9bac1; --ink-faint: #85868d;
+    --rule: #30323a; --word: #3987e5; --char: #9085e9; --sem: #f0834f; --hybrid: #2ec78d;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --surface: #16171a; --raised: #1f2025; --ink: #f2f2ef; --ink-soft: #b9bac1; --ink-faint: #85868d;
+  --rule: #30323a; --word: #3987e5; --char: #9085e9; --sem: #f0834f; --hybrid: #2ec78d;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.6;
+  margin: 0;
+}
+.page {
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0 72px;
+  max-width: 1080px;
+  margin: 0 auto;
+}
+.col { max-width: 68ch; }
+h1, h2, h3, .eyebrow, .data, th, .tag { font-family: var(--font-head); }
+h1 { font-size: clamp(2rem, 5vw, 3.1rem); line-height: 1.05; margin: 0 0 14px; letter-spacing: -0.02em; text-wrap: balance; }
+h2 { font-size: 1.45rem; margin: 0 0 10px; letter-spacing: -0.01em; text-wrap: balance; }
+h3 { font-size: 1.05rem; margin: 0 0 6px; }
+p { margin: 0 0 16px; }
+a { color: var(--word); }
+.eyebrow { font-size: 0.74rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-faint); font-weight: 600; }
+header { border-bottom: 1px solid var(--rule); padding-block: 48px 36px; margin-bottom: 44px; }
+.standfirst { font-size: 1.18rem; color: var(--ink-soft); max-width: 60ch; }
+section { margin-bottom: 52px; scroll-margin-top: 20px; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px 28px; margin-top: 30px; }
+.fact .n { font-family: var(--font-data); font-size: 1.6rem; font-weight: 500; display: block; letter-spacing: -0.02em; }
+.fact .k { font-family: var(--font-head); font-size: 0.78rem; color: var(--ink-soft); line-height: 1.35; display: block; margin-top: 2px; }
+.wrap { overflow-x: auto; margin: 22px 0; }
+table { border-collapse: collapse; width: 100%; font-size: 0.92rem; min-width: 540px; }
+th { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-faint); text-align: right; font-weight: 600; padding: 0 10px 8px; border-bottom: 1px solid var(--rule); }
+th:first-child { text-align: left; }
+td { padding: 7px 10px; border-bottom: 1px solid var(--rule); text-align: right; font-family: var(--font-data); font-variant-numeric: tabular-nums; font-size: 0.86rem; }
+td:first-child { text-align: left; font-family: var(--font-head); font-size: 0.9rem; }
+tr.best td { background: color-mix(in oklab, var(--hybrid) 13%, transparent); }
+tr.best td:first-child { font-weight: 600; }
+.chart { margin: 26px 0; }
+.bar-row { display: grid; grid-template-columns: minmax(104px, 170px) 1fr; gap: 14px; align-items: center; margin-bottom: 9px; font-size: 0.84rem; }
+.bar-row .name { font-family: var(--font-head); color: var(--ink-soft); text-align: right; line-height: 1.25; }
+.bar-track { display: flex; align-items: center; gap: 9px; min-width: 0; }
+.bar { height: 17px; border-radius: 0 4px 4px 0; }
+.bar-val { font-family: var(--font-data); font-size: 0.78rem; font-variant-numeric: tabular-nums; color: var(--ink-soft); white-space: nowrap; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 20px; font-family: var(--font-head); font-size: 0.78rem; color: var(--ink-soft); margin-top: 14px; }
+.legend span { display: flex; align-items: center; gap: 7px; }
+.swatch { width: 13px; height: 13px; border-radius: 3px; flex: none; }
+.panel { background: var(--raised); border: 1px solid var(--rule); border-radius: 10px; padding: 20px 22px; margin: 24px 0; }
+.panel h3 { margin-top: 0; }
+.panel p:last-child { margin-bottom: 0; }
+.pair { display: grid; gap: 10px; margin: 14px 0; }
+.quote { font-family: var(--font-data); font-size: 0.8rem; line-height: 1.5; padding: 10px 13px; border-left: 3px solid var(--rule); color: var(--ink-soft); }
+.quote b { color: var(--ink); font-weight: 500; font-family: var(--font-head); display: block; font-size: 0.73rem; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 4px; }
+.verdict-bad { border-left-color: var(--sem); }
+.verdict-good { border-left-color: var(--hybrid); }
+.takeaways { display: grid; gap: 18px; margin-top: 22px; }
+.takeaway { display: grid; grid-template-columns: 30px 1fr; gap: 14px; }
+.takeaway .num { font-family: var(--font-data); color: var(--ink-faint); font-size: 0.95rem; padding-top: 2px; }
+.takeaway p { margin: 4px 0 0; color: var(--ink-soft); font-size: 0.96rem; }
+.takeaway strong { color: var(--ink); font-family: var(--font-head); font-size: 0.98rem; }
+ul.lim { padding-left: 20px; color: var(--ink-soft); font-size: 0.96rem; }
+ul.lim li { margin-bottom: 9px; }
+footer { border-top: 1px solid var(--rule); padding-top: 22px; color: var(--ink-faint); font-size: 0.84rem; font-family: var(--font-head); }
+code { font-family: var(--font-data); font-size: 0.84em; background: var(--raised); padding: 1px 5px; border-radius: 4px; }
+.note { font-size: 0.82rem; color: var(--ink-faint); font-family: var(--font-head); }
+@media (max-width: 560px) {
+  body { font-size: 16px; }
+  .bar-row { grid-template-columns: 1fr; gap: 3px; }
+  .bar-row .name { text-align: left; }
+}
+</style>
+
+<div class="page">
+<header>
+  <div class="col">
+    <span class="eyebrow">Experiment 1 · Data deduplication</span>
+    <h1>Duplicate hunting in ag_news and wikitext</h1>
+    <p class="standfirst">Four deduplication techniques built from scratch and measured against SemHash, the state-of-the-art semantic deduplicator. The interesting question is not how much each method removes — it is which one is right, and the corpora do not come with an answer key.</p>
+  </div>
+  <div class="facts">
+    <div class="fact"><span class="n">1,285,029</span><span class="k">records deduplicated across two corpora</span></div>
+    <div class="fact"><span class="n">7</span><span class="k">methods, four of them written from scratch</span></div>
+    <div class="fact"><span class="n">10,500</span><span class="k">known duplicates injected to score accuracy</span></div>
+    <div class="fact"><span class="n">0.916</span><span class="k">best F1, from a hybrid built here (SemHash: 0.867)</span></div>
+  </div>
+</header>
+
+<section class="col">
+  <span class="eyebrow">01 · The problem</span>
+  <h2>Three methods, three different stories about the same corpus</h2>
+  <p>Run the standard techniques over ag_news and they disagree wildly. Exact hashing finds nothing at all. MinHash flags 4.3% of the corpus. SemHash flags 10.1% — and at a looser threshold, a quarter of it.</p>
+  <p>They disagree about the test set too. Asked how many ag_news test records duplicate a training record, MinHash says 7.8% and SemHash says 18.5%. One of those is a mild caveat; the other would call the benchmark compromised.</p>
+  <p>Nothing in a removal count can settle this, so most of this project is about building ways to find out: an answer key of injected duplicates, a downstream classifier, a label-based error signal, and a breakdown of exactly which records the methods argue over.</p>
+</section>
+
+<section>
+  <div class="col">
+    <span class="eyebrow">02 · Baseline</span>
+    <h2>How much each method removes</h2>
+    <p>Every method keeps the first occurrence and attributes each removal to a record that is itself kept — never to one already removed, since similarity is not transitive. SemHash's own selection works the same way, so the comparison is like-for-like.</p>
+  </div>
+  <div class="chart">
+    <h3>ag_news — 120,000 news snippets</h3>
+    <div class="bar-row"><span class="name">Exact hash</span><div class="bar-track"><div class="bar" style="width:0.4%;background:var(--ink-faint)"></div><span class="bar-val">0.00% — not one byte-identical pair</span></div></div>
+    <div class="bar-row"><span class="name">Exact, normalised</span><div class="bar-track"><div class="bar" style="width:0.7%;background:var(--ink-faint)"></div><span class="bar-val">0.18%</span></div></div>
+    <div class="bar-row"><span class="name">Bloom filter</span><div class="bar-track"><div class="bar" style="width:0.8%;background:var(--ink-faint)"></div><span class="bar-val">0.19%</span></div></div>
+    <div class="bar-row"><span class="name">SimHash ≤ 3 bits</span><div class="bar-track"><div class="bar" style="width:6.3%;background:var(--word)"></div><span class="bar-val">1.55%</span></div></div>
+    <div class="bar-row"><span class="name">MinHash ≥ 0.7</span><div class="bar-track"><div class="bar" style="width:17.6%;background:var(--word)"></div><span class="bar-val">4.33%</span></div></div>
+    <div class="bar-row"><span class="name">Character MinHash ≥ 0.6</span><div class="bar-track"><div class="bar" style="width:37.8%;background:var(--char)"></div><span class="bar-val">9.31%</span></div></div>
+    <div class="bar-row"><span class="name">SemHash ≥ 0.9</span><div class="bar-track"><div class="bar" style="width:41.1%;background:var(--sem)"></div><span class="bar-val">10.11%</span></div></div>
+    <div class="bar-row"><span class="name">SemHash ≥ 0.8</span><div class="bar-track"><div class="bar" style="width:100%;background:var(--sem)"></div><span class="bar-val">24.62%</span></div></div>
+    <div class="legend">
+      <span><i class="swatch" style="background:var(--ink-faint)"></i>exact</span>
+      <span><i class="swatch" style="background:var(--word)"></i>word-level, built here</span>
+      <span><i class="swatch" style="background:var(--char)"></i>character-level, built here</span>
+      <span><i class="swatch" style="background:var(--sem)"></i>SemHash baseline</span>
+    </div>
+  </div>
+  <div class="col">
+    <p class="note">wikitext-103 behaves completely differently: 16.45% of its 1,165,029 non-empty lines are byte-identical to an earlier line before any clever method runs, because the corpus is raw lines full of section headings and table rows. The same thresholds mean different things on the two corpora.</p>
+    <p>The Bloom filter reproduces normalised exact deduplication with 13 false positives on ag_news and 32 on wikitext — 0.016% of its decisions — from a 2.1&nbsp;MB bit array instead of 1.16M stored digests. It behaves exactly as <code>m = −n·ln p / ln²2</code> predicts, which is the point of including it.</p>
+  </div>
+</section>
+
+<section>
+  <div class="col">
+    <span class="eyebrow">03 · The answer key</span>
+    <h2>Scoring the methods against known duplicates</h2>
+    <p>Since the corpora carry no duplicate labels, I made some: 20,000 ag_news records with only exact duplicates stripped, plus 1,500 perturbed copies for each of seven kinds of edit. Precision is a lower bound — the base is natural text that may hold duplicates of its own — so a second signal checks it: ag_news is labelled, and a removed pair whose two topic labels disagree is a near-certain mistake.</p>
+  </div>
+  <div class="wrap">
+    <table>
+      <caption class="note" style="text-align:left;padding-bottom:10px">Recall by kind of edit (%), on 10,500 injected duplicates</caption>
+      <thead><tr><th>method</th><th>reformat</th><th>typos</th><th>drop 15%</th><th>replace 15%</th><th>truncate</th><th>swap halves</th><th>boilerplate</th></tr></thead>
+      <tbody>
+        <tr><td>Exact, normalised</td><td>100</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>SimHash ≤ 3</td><td>100</td><td>2</td><td>14</td><td>4</td><td>1</td><td>100</td><td>2</td></tr>
+        <tr><td>MinHash ≥ 0.7</td><td>100</td><td>3</td><td>13</td><td>8</td><td>26</td><td>100</td><td>41</td></tr>
+        <tr><td>MinHash ≥ 0.5</td><td>100</td><td>15</td><td>36</td><td>26</td><td>84</td><td>100</td><td>80</td></tr>
+        <tr><td>SemHash ≥ 0.9</td><td>100</td><td>24</td><td>95</td><td>54</td><td>79</td><td>100</td><td>31</td></tr>
+        <tr><td>SemHash ≥ 0.8</td><td>99</td><td>66</td><td>97</td><td>87</td><td>95</td><td>100</td><td>80</td></tr>
+        <tr><td>Character MinHash ≥ 0.6</td><td>100</td><td>91</td><td>87</td><td>56</td><td>80</td><td>100</td><td>71</td></tr>
+        <tr class="best"><td>Cascade (character)</td><td>100</td><td>91</td><td>97</td><td>67</td><td>92</td><td>100</td><td>76</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="col">
+    <h3>Four things this table shows that removal counts cannot</h3>
+    <div class="takeaways">
+      <div class="takeaway"><span class="num">01</span><div><strong>Word order is free.</strong><p>Every method scores 100 on reordered text. Shingle sets, bit-vote fingerprints and bag-of-words embeddings are all order-insensitive, so no method here catches a genuinely restructured copy — they catch a copy whose <em>parts</em> are unchanged.</p></div></div>
+      <div class="takeaway"><span class="num">02</span><div><strong>Deletion is where semantics wins.</strong><p>Dropping 15% of the words costs MinHash almost everything (13%) and SemHash almost nothing (95%). Deleting words destroys the specific three-word shingles MinHash depends on while the meaning barely moves. This is the clearest case for an embedding-based deduplicator.</p></div></div>
+      <div class="takeaway"><span class="num">03</span><div><strong>Boilerplate is where semantics loses.</strong><p>A copy wrapped in scraped navigation text is caught by MinHash ≥ 0.5 (80%) and missed by SemHash ≥ 0.9 (31%). Added text leaves shingle overlap largely intact but drags the embedding away — a real gap, since boilerplate-wrapped copies are the normal case in web corpora.</p></div></div>
+      <div class="takeaway"><span class="num">04</span><div><strong>Typos broke my own implementation.</strong><p>Corrupting 3% of characters left MinHash at 3% recall and SimHash at 2%: one wrong letter destroys a whole token, and with it every word shingle containing it. That is a flaw in my design choice rather than in the technique, and fixing it turned out to be the most valuable change in the project.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="col">
+    <span class="eyebrow">04 · Built here</span>
+    <h2>Change the shingle, beat the state of the art</h2>
+    <p>The fix for typos is to shingle <em>characters</em> instead of words: one wrong letter dents a handful of five-character windows rather than destroying whole tokens. On a typo pair the estimated Jaccard rises from 0.23 to 0.58, with unrelated text still at 0.00. Same LSH index, same code path, one parameter.</p>
+    <p>Two further constructions combine the families. <strong>Cascade</strong> runs exact matching, then character MinHash, then embeds only the survivors. <strong>Two-signal</strong> removes a record only when the embedding agrees <em>and</em> the pair shares literal wording, which is exactly what two different stories about one topic do not do.</p>
+  </div>
+  <div class="wrap">
+    <table>
+      <caption class="note" style="text-align:left;padding-bottom:10px">Quality frontier on the answer key — higher recall and precision are both better</caption>
+      <thead><tr><th>method</th><th>recall</th><th>precision ≥</th><th>F1 ≥</th><th>label-contradicting removals</th></tr></thead>
+      <tbody>
+        <tr><td>SimHash ≤ 3</td><td>0.318</td><td>0.984</td><td>0.481</td><td>3</td></tr>
+        <tr><td>MinHash ≥ 0.7</td><td>0.414</td><td>0.963</td><td>0.579</td><td>13</td></tr>
+        <tr><td>MinHash ≥ 0.5</td><td>0.628</td><td>0.960</td><td>0.759</td><td>26</td></tr>
+        <tr><td>SemHash ≥ 0.9</td><td>0.691</td><td>0.939</td><td>0.796</td><td>47</td></tr>
+        <tr><td>SemHash ≥ 0.85</td><td>0.830</td><td>0.907</td><td>0.867</td><td>88</td></tr>
+        <tr><td>SemHash ≥ 0.8</td><td>0.892</td><td>0.843</td><td>0.867</td><td>203</td></tr>
+        <tr><td>Two-signal (character)</td><td>0.836</td><td>0.930</td><td>0.880</td><td>67</td></tr>
+        <tr><td>Character MinHash ≥ 0.6</td><td>0.834</td><td>0.957</td><td>0.891</td><td>54</td></tr>
+        <tr class="best"><td>Cascade (character)</td><td>0.890</td><td>0.944</td><td>0.916</td><td>61</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="col">
+    <div class="panel">
+      <h3>A purely lexical method beats the semantic baseline here</h3>
+      <p>Character MinHash alone reaches F1 0.891 against SemHash's best of 0.867 — no embedding model, no pretrained weights, just five-character shingles through the same LSH index. The cascade then reaches <strong>0.916</strong>: it matches SemHash ≥ 0.8 on recall (0.890 vs 0.892) while making <strong>a third as many label-contradicting removals</strong> (61 vs 203), because the cheap precise filter clears the easy cases before the component that over-merges ever sees them.</p>
+    </div>
+    <p class="note">Against my own result: every injected duplicate is a surface edit of a source text, so the benchmark rewards methods that track surface form. Independently written paraphrase is absent. The column that comes closest — replacing 15% of words with unrelated ones — is the one where SemHash ≥ 0.85 (77%) still beats character MinHash (56%). The lexical win holds for the corruptions that dominate real corpora; it is not a claim that embeddings are unnecessary.</p>
+  </div>
+</section>
+
+<section>
+  <div class="col">
+    <span class="eyebrow">05 · Error analysis</span>
+    <h2>What exactly does SemHash remove that MinHash keeps?</h2>
+    <p>57,454 wikitext lines and 7,145 ag_news records are removed by SemHash ≥ 0.9 and kept by MinHash ≥ 0.7. Measuring those records settles the argument better than any aggregate.</p>
+  </div>
+  <div class="wrap">
+    <table>
+      <thead><tr><th>wikitext records</th><th>removed by SemHash only</th><th>removed by both</th><th>kept by both</th></tr></thead>
+      <tbody>
+        <tr><td>count</td><td>57,454</td><td>206,996</td><td>896,599</td></tr>
+        <tr><td>median length</td><td>3 tokens</td><td>1 token</td><td>86 tokens</td></tr>
+        <tr><td>under 10 tokens</td><td>70.8%</td><td>92.7%</td><td>17.2%</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="col">
+    <p>On wikitext the disagreement is almost entirely about fragments. A three-word section heading carries nothing beyond its topic, so its embedding <em>is</em> its topic, and any two headings on adjacent subjects land close together:</p>
+    <div class="pair">
+      <div class="quote verdict-bad"><b>Wrongly merged</b>“= = = Diamond Jubilee = = =” removed as a duplicate of “= = = Diamond = = =”</div>
+      <div class="quote verdict-bad"><b>Wrongly merged</b>“= = Campaign development = =” removed as a duplicate of “= = Campaign = =”</div>
+    </div>
+    <p>On ag_news the disputed removals are full-length prose — median 39 tokens, the same as everything else — and they split in two. 39.3% share strong wording (Jaccard ≥ 0.5) with the record they are merged into: genuine near-duplicates that MinHash's threshold simply missed. The other 56.4% share almost nothing, and those are a mixture of real paraphrase and real error:</p>
+    <div class="pair">
+      <div class="quote verdict-good"><b>Correctly merged</b>“Stocks Sag as Colgate Warns, Oil Jumps” with “Stocks Slip After Colgate Warns” — different headlines, same wire story.</div>
+      <div class="quote verdict-bad"><b>Wrongly merged</b>“Telekom Austria Plans to Buy Mobiltel for $1.5 Bln” with “Telekom Austria Wins Mobiltel Bid Option for $2.1 Bln” — same companies, two different events at two different prices.</div>
+    </div>
+    <p>So SemHash's extra removals on ag_news are substantially real, and its extra removals on wikitext are substantially spurious. The corpus decides. A single published removal rate is not a quality claim.</p>
+  </div>
+</section>
+
+<section>
+  <div class="col">
+    <span class="eyebrow">06 · Downstream</span>
+    <h2>Does any of it make a better model?</h2>
+    <p>A deduplicator earns its place only if the cleaned corpus trains something better, so I trained a TF-IDF and logistic-regression topic classifier under each setting. Deduplication also shrinks the training set, and less data costs accuracy by itself — so every run is paired with a random subsample of exactly the same size, drawn five times for an error bar.</p>
+  </div>
+  <div class="wrap">
+    <table>
+      <thead><tr><th>training set</th><th>size</th><th>deduplicated</th><th>random, same size</th><th>difference</th></tr></thead>
+      <tbody>
+        <tr><td>full corpus</td><td>120,000</td><td>92.55%</td><td>—</td><td>—</td></tr>
+        <tr><td>exact, normalised</td><td>119,782</td><td>92.41%</td><td>92.53% ± 0.05</td><td>−0.12 · beyond 2σ</td></tr>
+        <tr><td>SimHash ≤ 3</td><td>118,143</td><td>92.41%</td><td>92.52% ± 0.10</td><td>−0.11 · noise</td></tr>
+        <tr><td>MinHash ≥ 0.7</td><td>114,810</td><td>92.46%</td><td>92.49% ± 0.06</td><td>−0.03 · noise</td></tr>
+        <tr><td>SemHash ≥ 0.9</td><td>107,874</td><td>92.29%</td><td>92.35% ± 0.05</td><td>−0.06 · noise</td></tr>
+        <tr class="best"><td>SemHash ≥ 0.8</td><td>90,459</td><td>92.33%</td><td>92.02% ± 0.10</td><td>+0.31 · beyond 2σ</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="col">
+    <div class="panel">
+      <h3>Deduplication is a budget allocator, not a free win</h3>
+      <p>Below a 10% removal rate it changes nothing a classifier can detect — every difference sits inside the noise of simply having fewer records. But when a quarter of the corpus has to go, dropping duplicates beats dropping at random by 0.31 points, the only comparison here clearing two standard deviations upward. The honest claim is conditional: deduplication pays when you are already discarding data, which is exactly the pretraining situation it was built for.</p>
+    </div>
+    <p>The one measurable <em>cost</em> appears at the other end. Removing 218 exact duplicates scored 0.12 points <em>below</em> removing 218 records at random, outside 2σ. Duplicated records act as mild upweighting of whatever they say, and stripping them takes that signal too.</p>
+    <h3>Contamination did not inflate this benchmark</h3>
+    <p>7.8% of the ag_news test set duplicates a training record by MinHash's reckoning, 18.5% by SemHash's. The standard worry is that a model scores inflated accuracy on those records. It does not: accuracy on the contaminated slice was 92.10% against 92.59% clean (MinHash-flagged), and 92.88% against 92.48% (SemHash-flagged). A 120,000-example linear classifier over four topics has no capacity to memorise individual documents, so leakage buys it nothing. That is evidence against assuming leakage inflates <em>every</em> benchmark — not evidence that it is harmless for generative models, where verbatim memorisation is the actual mechanism.</p>
+  </div>
+</section>
+
+<section class="col">
+  <span class="eyebrow">07 · Conclusions</span>
+  <h2>What the evidence supports</h2>
+  <div class="takeaways">
+    <div class="takeaway"><span class="num">01</span><div><strong>Removal rate is not a quality metric.</strong><p>SemHash removes 2.3× more of ag_news than MinHash. On that corpus much of the excess is real. On wikitext the same setting mostly merges three-token section headings. The identical published number means opposite things on the two corpora.</p></div></div>
+    <div class="takeaway"><span class="num">02</span><div><strong>The shingle unit mattered more than the algorithm.</strong><p>Moving MinHash from three-word to five-character shingles lifted F1 from 0.579 to 0.891 — a larger gain than switching from lexical to semantic matching, from the cheapest change in the project.</p></div></div>
+    <div class="takeaway"><span class="num">03</span><div><strong>Cheap filter first, expensive filter second.</strong><p>The character cascade reaches F1 0.916 against SemHash's 0.867 with a third of its label-contradicting errors, because the precise filter clears the easy cases before the permissive one can over-merge them.</p></div></div>
+    <div class="takeaway"><span class="num">04</span><div><strong>Deduplication pays when data is already being cut.</strong><p>Nothing measurable below 10% removal; +0.31 points over random subsampling at 24.6%, beyond 2σ.</p></div></div>
+    <div class="takeaway"><span class="num">05</span><div><strong>Contamination did not inflate this benchmark.</strong><p>18.5% of the test set duplicates training data and the model scores no better on it. Leakage is a memorisation problem, and this model has nothing to memorise with.</p></div></div>
+  </div>
+</section>
+
+<section class="col">
+  <span class="eyebrow">08 · Limitations</span>
+  <h2>Where this evidence stops</h2>
+  <ul class="lim">
+    <li><strong>The answer key tests corruption, not paraphrase.</strong> Every injected duplicate is a surface edit of a source text, so independently written rewrites — where embeddings should dominate — are unrepresented.</li>
+    <li><strong>Precision is a lower bound.</strong> The benchmark base is natural ag_news, so some removals outside the answer key are real duplicates rather than mistakes. Label-contradicting removals bound the error from the other side; neither number is exact precision.</li>
+    <li><strong>One downstream task, one model class.</strong> TF-IDF and logistic regression on four topics. The leakage finding in particular needs rechecking on a generative model.</li>
+    <li><strong>Approximate indexes throughout.</strong> LSH banding, the six-block SimHash index and SemHash's nearest-neighbour search can each miss a pair. The SimHash index is provably exhaustive to three bits and LSH recall was measured above 95% for pairs over Jaccard 0.8, but no search here is exact.</li>
+    <li><strong>Thresholds are not tuned per corpus,</strong> although the error analysis shows the two corpora are very different problems.</li>
+  </ul>
+</section>
+
+<footer class="col">
+  <p>Code, results and the full write-up: <code>experiments/dedup/</code> — methods in NumPy only, 12 unit tests checking each probabilistic structure against the exact quantity it approximates. Baseline: <a href="https://github.com/MinishLab/semhash">SemHash</a> 0.5.0 with <code>potion-base-8M</code>. Datasets: <code>fancyzhx/ag_news</code> and <code>Salesforce/wikitext</code> (wikitext-103-raw-v1).</p>
+</footer>
+</div>
