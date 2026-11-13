@@ -1,0 +1,447 @@
+{
+  "main_settings": {
+    "minhash": 0.7,
+    "simhash": 3,
+    "semhash": 0.9
+  },
+  "wikitext_raw_lines": 1801350,
+  "wikitext_empty_lines": 636321,
+  "datasets": {
+    "ag_news": {
+      "dataset": "ag_news",
+      "n_records": 120000,
+      "methods": {
+        "bloom": {
+          "removed": 231,
+          "kept": 119769,
+          "removed_pct": 0.193,
+          "seconds": 1.44
+        },
+        "exact": {
+          "removed": 0,
+          "kept": 120000,
+          "removed_pct": 0.0,
+          "seconds": 0.12
+        },
+        "exact_norm": {
+          "removed": 218,
+          "kept": 119782,
+          "removed_pct": 0.182,
+          "seconds": 1.05
+        },
+        "minhash_0.5": {
+          "removed": 8081,
+          "kept": 111919,
+          "removed_pct": 6.734,
+          "seconds": 5.52
+        },
+        "minhash_0.6": {
+          "removed": 7012,
+          "kept": 112988,
+          "removed_pct": 5.843,
+          "seconds": 5.52
+        },
+        "minhash_0.7": {
+          "removed": 5190,
+          "kept": 114810,
+          "removed_pct": 4.325,
+          "seconds": 5.52
+        },
+        "minhash_0.8": {
+          "removed": 3157,
+          "kept": 116843,
+          "removed_pct": 2.631,
+          "seconds": 5.52
+        },
+        "minhash_0.9": {
+          "removed": 702,
+          "kept": 119298,
+          "removed_pct": 0.585,
+          "seconds": 5.52
+        },
+        "simhash_0": {
+          "removed": 305,
+          "kept": 119695,
+          "removed_pct": 0.254,
+          "seconds": 3.28
+        },
+        "simhash_1": {
+          "removed": 582,
+          "kept": 119418,
+          "removed_pct": 0.485,
+          "seconds": 3.28
+        },
+        "simhash_2": {
+          "removed": 1086,
+          "kept": 118914,
+          "removed_pct": 0.905,
+          "seconds": 3.28
+        },
+        "simhash_3": {
+          "removed": 1857,
+          "kept": 118143,
+          "removed_pct": 1.547,
+          "seconds": 3.28
+        },
+        "semhash_0.9": {
+          "removed": 12128,
+          "kept": 107872,
+          "removed_pct": 10.107,
+          "seconds": 22.12
+        },
+        "semhash_0.95": {
+          "removed": 6201,
+          "kept": 113799,
+          "removed_pct": 5.167,
+          "seconds": 22.99
+        },
+        "semhash_0.8": {
+          "removed": 29542,
+          "kept": 90458,
+          "removed_pct": 24.618,
+          "seconds": 22.48
+        },
+        "semhash_0.85": {
+          "removed": 19471,
+          "kept": 100529,
+          "removed_pct": 16.226,
+          "seconds": 23.69
+        }
+      },
+      "timing_detail": {
+        "exact": 0.12,
+        "exact_norm": 1.05,
+        "bloom": 1.44,
+        "bloom_bytes": 215664,
+        "minhash_index": 5.4,
+        "minhash_0.5": 5.52,
+        "minhash_0.6": 5.52,
+        "minhash_0.7": 5.52,
+        "minhash_0.8": 5.52,
+        "minhash_0.9": 5.52,
+        "simhash_index": 3.16,
+        "simhash_0": 3.28,
+        "simhash_1": 3.28,
+        "simhash_2": 3.28,
+        "simhash_3": 3.28,
+        "semhash_index": 15.23,
+        "semhash_0.9": 22.12,
+        "semhash_0.95": 22.99,
+        "semhash_0.8": 22.48,
+        "semhash_0.85": 23.69
+      },
+      "bloom_false_positives": 13,
+      "overlap": {
+        "minhash_0.7|semhash_0.9": {
+          "both": 4983,
+          "only_first": 207,
+          "only_second": 7145
+        },
+        "simhash_3|semhash_0.9": {
+          "both": 1816,
+          "only_first": 41,
+          "only_second": 10312
+        },
+        "minhash_0.7|simhash_3": {
+          "both": 1660,
+          "only_first": 3530,
+          "only_second": 197
+        },
+        "exact_norm|semhash_0.9": {
+          "both": 218,
+          "only_first": 0,
+          "only_second": 11910
+        }
+      },
+      "examples": {
+        "semhash_only": [
+          {
+            "removed": "Stocks Sag as Colgate Warns, Oil Jumps  NEW YORK (Reuters) - Stocks fell on Monday as warnings of  lower earnings from consumer goods giants Colgate-Palmolive and  Unilever weighed on markets.",
+            "duplicate_of": "Stocks Slip After Colgate Warns  NEW YORK (Reuters) - Stocks fell on Monday as warnings of  lower earnings from consumer goods giants Colgate-Palmolive and  Unilever weighed on markets."
+          },
+          {
+            "removed": "Redskins Top Giants, Break Losing Streak (AP) AP - Stop the game and have a parade  #151; the Washington Redskins finally scored 20 points. The historic moment occurred with 41 seconds left in the first half of Sunday's rout of the New York Giants, when tight end Robert Royal went to the ground to c",
+            "duplicate_of": "A giant win for Redskins LANDOVER, Md. -- Stop the game and have a parade. The Washington Redskins finally scored 20 points. The big moment occurred with 41 seconds left in the first half of yesterday's rout of the New York Giants, when tight end Robert Royal caught Patrick Ramsey's 9-yard pass. Roy"
+          },
+          {
+            "removed": "Telekom Austria Plans to Buy Mobiltel for \\$1.5 Bln (Update7) Telekom Austria AG plans to buy Bulgaria #39;s largest wireless company, MobilTel EAD, for 1.15 billion euros (\\$1.5 billion), adding 3 million subscribers in a nation where less than half the population has a cellular phone.",
+            "duplicate_of": "Telekom Austria Wins Mobiltel Bid Option for \\$2.1 Bln (Update2) Telekom Austria AG, the country #39;s biggest phone operator, won the right to buy Bulgaria #39;s largest mobile phone company, MobilTel EAD, for 1.6 billion euros (\\$2.1 billion), an acquisition that would add 3 million subscribers."
+          },
+          {
+            "removed": "Health of Arafat said to deteriorate JERUSALEM -- The health of Palestinian leader Yasser Arafat deteriorated yesterday, and Palestinian doctors were rushed to his Ramallah compound in the West Bank to treat what has so far been diagnosed as a stomach disorder, according to senior Palestinian offici",
+            "duplicate_of": "Health of Arafat said to deteriorate The health of Palestinian leader Yasser Arafat deteriorated yesterday, and Palestinian doctors were rushed to his Ramallah compound in the "
+          }
+        ],
+        "minhash_only": [
+          {
+            "removed": "OPEC wrestles over output increase as hurricane, Iraq attacks lift prices OPEC members were divided yesterday on whether their output should be increased in a bid to boost global supply that might cause oil prices to drop.",
+            "duplicate_of": "OPEC wrestles over output increase as hurricane, Iraq attacks lift &lt;b&gt;...&lt;/b&gt; OPEC members were divided yesterday on whether their output should be increased in a bid to boost global supply that might cause oil prices to drop."
+          },
+          {
+            "removed": "BlackBerry, Bluetooth Miss a Shot to Move Into More Hands these two uses of wireless technology have remained stubbornly irrelevant to many mainstream users, despite the benefits they might offer and the hype they often get in the press.",
+            "duplicate_of": "BlackBerry, Bluetooth Miss a Shot to Move Into More Hands (washingtonpost.com) washingtonpost.com - BlackBerrys and Bluetooth share an embarrassing trait -- these two uses of wireless technology have remained stubbornly irrelevant to many mainstream users, despite the benefits they might offer and t"
+          },
+          {
+            "removed": "Iraqi Troops Raid Baghdad Mosque, 17 Detained (Reuters) Reuters - Hundreds of Iraqi troops backed by U.S.\\forces stormed a Sunni Muslim mosque in Baghdad after Friday\\prayers, killing four people and wounding at least nine,\\witnesses and an influential group of Sunni clerics said.",
+            "duplicate_of": "Iraqi Troops Raid Baghdad Mosque, 17 Detained Hundreds of Iraqi troops backed by US forces stormed a Sunni Muslim mosque in Baghdad after Friday prayers, killing four people and wounding at least nine, witnesses and an influential group of Sunni clerics said."
+          },
+          {
+            "removed": "Typhoon kills 66 in Japan, deadliest in 22 years Japan #39;s deadliest typhoon in more than two decades killed 66 people, news reports said on Thursday as rescuers searched frantically for 22 still missing in floods and landslides.",
+            "duplicate_of": "Typhoon Kills 66 in Japan, Deadliest in 22 Years  TOKYO (Reuters) - Japan's deadliest typhoon in more than  two decades killed 66 people, news reports said on Thursday as  rescuers searched frantically for 22 still missing in floods  and landslides."
+          }
+        ]
+      }
+    },
+    "wikitext": {
+      "dataset": "wikitext",
+      "n_records": 1165029,
+      "methods": {
+        "bloom": {
+          "removed": 205330,
+          "kept": 959699,
+          "removed_pct": 17.624,
+          "seconds": 23.13
+        },
+        "exact": {
+          "removed": 191616,
+          "kept": 973413,
+          "removed_pct": 16.447,
+          "seconds": 1.77
+        },
+        "exact_norm": {
+          "removed": 205298,
+          "kept": 959731,
+          "removed_pct": 17.622,
+          "seconds": 18.54
+        },
+        "minhash_0.5": {
+          "removed": 216804,
+          "kept": 948225,
+          "removed_pct": 18.609,
+          "seconds": 122.65
+        },
+        "minhash_0.6": {
+          "removed": 213933,
+          "kept": 951096,
+          "removed_pct": 18.363,
+          "seconds": 122.64
+        },
+        "minhash_0.7": {
+          "removed": 210976,
+          "kept": 954053,
+          "removed_pct": 18.109,
+          "seconds": 122.64
+        },
+        "minhash_0.8": {
+          "removed": 208390,
+          "kept": 956639,
+          "removed_pct": 17.887,
+          "seconds": 122.64
+        },
+        "minhash_0.9": {
+          "removed": 206561,
+          "kept": 958468,
+          "removed_pct": 17.73,
+          "seconds": 122.64
+        },
+        "simhash_0": {
+          "removed": 207090,
+          "kept": 957939,
+          "removed_pct": 17.776,
+          "seconds": 97.89
+        },
+        "simhash_1": {
+          "removed": 209642,
+          "kept": 955387,
+          "removed_pct": 17.995,
+          "seconds": 97.89
+        },
+        "simhash_2": {
+          "removed": 217378,
+          "kept": 947651,
+          "removed_pct": 18.659,
+          "seconds": 97.9
+        },
+        "simhash_3": {
+          "removed": 234578,
+          "kept": 930451,
+          "removed_pct": 20.135,
+          "seconds": 97.94
+        },
+        "semhash_0.9": {
+          "removed": 264450,
+          "kept": 900579,
+          "removed_pct": 22.699,
+          "seconds": 464.35
+        },
+        "semhash_0.95": {
+          "removed": 225616,
+          "kept": 939413,
+          "removed_pct": 19.366,
+          "seconds": 471.65
+        },
+        "semhash_0.8": {
+          "removed": 395602,
+          "kept": 769427,
+          "removed_pct": 33.956,
+          "seconds": 566.81
+        },
+        "semhash_0.85": {
+          "removed": 317374,
+          "kept": 847655,
+          "removed_pct": 27.242,
+          "seconds": 598.72
+        }
+      },
+      "timing_detail": {
+        "exact": 1.77,
+        "exact_norm": 18.54,
+        "bloom": 23.13,
+        "bloom_bytes": 2093789,
+        "minhash_index": 120.86,
+        "minhash_0.5": 122.65,
+        "minhash_0.6": 122.64,
+        "minhash_0.7": 122.64,
+        "minhash_0.8": 122.64,
+        "minhash_0.9": 122.64,
+        "simhash_index": 96.11,
+        "simhash_0": 97.89,
+        "simhash_1": 97.89,
+        "simhash_2": 97.9,
+        "simhash_3": 97.94,
+        "semhash_index": 330.87,
+        "semhash_0.9": 464.35,
+        "semhash_0.95": 471.65,
+        "semhash_0.8": 566.81,
+        "semhash_0.85": 598.72
+      },
+      "bloom_false_positives": 32,
+      "overlap": {
+        "minhash_0.7|semhash_0.9": {
+          "both": 206996,
+          "only_first": 3980,
+          "only_second": 57454
+        },
+        "simhash_3|semhash_0.9": {
+          "both": 206607,
+          "only_first": 27971,
+          "only_second": 57843
+        },
+        "minhash_0.7|simhash_3": {
+          "both": 207770,
+          "only_first": 3206,
+          "only_second": 26808
+        },
+        "exact_norm|semhash_0.9": {
+          "both": 201909,
+          "only_first": 3389,
+          "only_second": 62541
+        }
+      },
+      "examples": {
+        "semhash_only": [
+          {
+            "removed": " = = Campaign development = = \n",
+            "duplicate_of": " = = Campaign = = \n"
+          },
+          {
+            "removed": " = = = Diamond Jubilee = = = \n",
+            "duplicate_of": " = = = Diamond = = = \n"
+          },
+          {
+            "removed": " = = = Agni 's Philosophy = = = \n",
+            "duplicate_of": " = = = = Agni = = = = \n"
+          },
+          {
+            "removed": " She sailed later that month for the Mediterranean , but , once she reached Gibraltar , she was diverted to Freetown , Sierra Leone to search for German commerce raiders . The ship was transferred to the North America and West Indies Station in October and was refitted in Sheerness between 18 Januar",
+            "duplicate_of": " The ship sailed to Freetown , Sierra Leone on 30 August and arrived on 4 September to search for German commerce raiders . She was transferred back to the UK in November for a more thorough refit at Sheerness between 18 December and 23 March 1940 . In the meantime , the 2nd Destroyer Flotilla had b"
+          }
+        ],
+        "minhash_only": [
+          {
+            "removed": " WWA World Tag Team Championship ( 1 time ) \n",
+            "duplicate_of": " World Tag Team Championship ( 1 time ) \n"
+          },
+          {
+            "removed": " A2 . \" Luxurious \" ( Album Version ) – 4 : 24 \n",
+            "duplicate_of": " \" Luxurious \" ( Album Version ) – 4 : 24 \n"
+          },
+          {
+            "removed": " Lárus was sentenced to 9 months in prison by the District Court of Reykjavík for a major breach of trust . Out of the 9 months , 6 were suspended for 2 years . The Supreme Court of Iceland acquitted Lárus . \n",
+            "duplicate_of": " Guðmundur was sentenced to 9 months in prison by the District Court of Reykjavík for a major breach of trust . Out of the 9 months , 6 were suspended for 2 years . The Supreme Court of Iceland acquitted Guðmundur . \n"
+          },
+          {
+            "removed": " World Tag Team Championship ( 1 time ) – with Brian Kendrick \n",
+            "duplicate_of": " ICW Tag Team Championship ( 1 time ) – with Brian Kendrick \n"
+          }
+        ]
+      }
+    }
+  },
+  "ag_news_cross_split": {
+    "n_train": 120000,
+    "n_test": 7600,
+    "methods": {
+      "exact": {
+        "flagged": 0,
+        "flagged_pct": 0.0
+      },
+      "exact_norm": {
+        "flagged": 15,
+        "flagged_pct": 0.197
+      },
+      "minhash_0.5": {
+        "flagged": 951,
+        "flagged_pct": 12.513
+      },
+      "minhash_0.6": {
+        "flagged": 815,
+        "flagged_pct": 10.724
+      },
+      "minhash_0.7": {
+        "flagged": 595,
+        "flagged_pct": 7.829
+      },
+      "minhash_0.8": {
+        "flagged": 350,
+        "flagged_pct": 4.605
+      },
+      "minhash_0.9": {
+        "flagged": 73,
+        "flagged_pct": 0.961
+      },
+      "simhash_0": {
+        "flagged": 24,
+        "flagged_pct": 0.316
+      },
+      "simhash_1": {
+        "flagged": 57,
+        "flagged_pct": 0.75
+      },
+      "simhash_2": {
+        "flagged": 114,
+        "flagged_pct": 1.5
+      },
+      "simhash_3": {
+        "flagged": 209,
+        "flagged_pct": 2.75
+      },
+      "semhash_0.8": {
+        "flagged": 3131,
+        "flagged_pct": 41.197
+      },
+      "semhash_0.85": {
+        "flagged": 2142,
+        "flagged_pct": 28.184
+      },
+      "semhash_0.9": {
+        "flagged": 1404,
+        "flagged_pct": 18.474
+      },
+      "semhash_0.95": {
+        "flagged": 701,
+        "flagged_pct": 9.224
+      }
+    }
+  }
+}
