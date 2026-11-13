@@ -12,9 +12,9 @@ from __future__ import annotations
 
 import json
 import os
-import resource
 import subprocess
 import sys
+import threading
 import time
 from pathlib import Path
 
@@ -34,6 +34,45 @@ METHODS = (
 )
 
 
+PAGE_MB = os.sysconf("SC_PAGE_SIZE") / 1024 / 1024
+
+
+def current_rss_mb() -> float:
+    """Resident memory right now, in MB (field 2 of /proc/self/statm is resident pages)."""
+    with open("/proc/self/statm", "rb") as handle:
+        return int(handle.read().split()[1]) * PAGE_MB
+
+
+class RssSampler:
+    """Track peak resident memory while a block runs.
+
+    ``resource.getrusage`` reports a high-water mark that the corpus load has already set, so
+    it cannot see what a method allocates on top. Sampling the live value does.
+    """
+
+    def __init__(self, interval: float = 0.02) -> None:
+        self.interval, self.peak, self._stop = interval, 0.0, threading.Event()
+
+    def __enter__(self) -> "RssSampler":
+        self.baseline = self.peak = current_rss_mb()
+        self._thread = threading.Thread(target=self._run, daemon=True)
+        self._thread.start()
+        return self
+
+    def _run(self) -> None:
+        while not self._stop.wait(self.interval):
+            self.peak = max(self.peak, current_rss_mb())
+
+    def __exit__(self, *exc: object) -> None:
+        self._stop.set()
+        self._thread.join(timeout=1)
+        self.peak = max(self.peak, current_rss_mb())
+
+    @property
+    def used_mb(self) -> float:
+        return round(max(self.peak - self.baseline, 0.0), 1)
+
+
 def corpus(n: int) -> list[str]:
     from datasets import load_dataset
 
@@ -48,6 +87,8 @@ def measure(method: str, n: int) -> dict:
     import methods as M
 
     texts = corpus(n)
+    sampler = RssSampler()
+    sampler.__enter__()
     start = time.perf_counter()
 
     if method == "exact_norm":
@@ -77,13 +118,16 @@ def measure(method: str, n: int) -> dict:
     else:
         raise SystemExit(f"unknown method {method}")
 
+    elapsed = time.perf_counter() - start
+    sampler.__exit__()
     return {
         "method": method,
         "n": len(texts),
-        "seconds": round(time.perf_counter() - start, 2),
-        "peak_rss_mb": round(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024, 1),
+        "seconds": round(elapsed, 2),
+        "corpus_rss_mb": round(sampler.baseline, 1),
+        "method_rss_mb": sampler.used_mb,
         "removed": removed,
-        "records_per_second": int(len(texts) / max(time.perf_counter() - start, 1e-9)),
+        "records_per_second": int(len(texts) / max(elapsed, 1e-9)),
     }
 
 
@@ -106,7 +150,7 @@ def main() -> None:
             rows.append(row)
             print(
                 f"   {row['method']:18s} n={row['n']:>9,}  {row['seconds']:>8.2f}s"
-                f"  {row['records_per_second']:>8,} rec/s  {row['peak_rss_mb']:>7.0f} MB",
+                f"  {row['records_per_second']:>8,} rec/s  {row['method_rss_mb']:>7.0f} MB over corpus",
                 flush=True,
             )
             (RESULTS / "scaling.json").write_text(json.dumps(rows, indent=2))

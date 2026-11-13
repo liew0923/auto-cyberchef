@@ -213,10 +213,10 @@ def scaling_chart(rows: list) -> None:
         series = sorted((r for r in rows if r["method"] == method), key=lambda r: r["n"])
         xs = [r["n"] for r in series]
         axes[0].plot(xs, [r["seconds"] for r in series], styles[method], color=family_of(method), marker="o", ms=4, label=method)
-        axes[1].plot(xs, [r["peak_rss_mb"] for r in series], styles[method], color=family_of(method), marker="o", ms=4, label=method)
+        axes[1].plot(xs, [r.get("method_rss_mb", r["peak_rss_mb"]) for r in series], styles[method], color=family_of(method), marker="o", ms=4, label=method)
     for ax, ylabel, title in (
         (axes[0], "wall-clock seconds", "Runtime"),
-        (axes[1], "peak RSS (MB)", "Memory"),
+        (axes[1], "MB above the loaded corpus", "Memory used by the method"),
     ):
         ax.set_xscale("log")
         ax.set_yscale("log")
