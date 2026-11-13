@@ -150,8 +150,12 @@ code { font-family: var(--font-data); font-size: 0.84em; background: var(--raise
     </div>
   </div>
   <div class="col">
-    <p class="note">wikitext-103 behaves completely differently: 16.45% of its 1,165,029 non-empty lines are byte-identical to an earlier line before any clever method runs, because the corpus is raw lines full of section headings and table rows. The same thresholds mean different things on the two corpora.</p>
+    <p class="note">wikitext-103 behaves completely differently: 16.45% of its 1,165,029 non-empty lines are byte-identical to an earlier line before any clever method runs, because the corpus is raw lines full of section headings and table rows. The same thresholds mean different things on the two corpora — there, MinHash removes 18.11%, character MinHash 20.24% and SemHash 22.70%, a far narrower spread than on ag_news.</p>
     <p>The Bloom filter reproduces normalised exact deduplication with 13 false positives on ag_news and 32 on wikitext — 0.016% of its decisions — from a 2.1&nbsp;MB bit array instead of 1.16M stored digests. It behaves exactly as <code>m = −n·ln p / ln²2</code> predicts, which is the point of including it.</p>
+    <div class="panel">
+      <h3>The cheap method is not always the cheap method</h3>
+      <p>Character shingles produce one shingle per character instead of one per word, so wikitext's 1.16M lines generate roughly 340M shingles against 134M for word shingles — and the 128-permutation loop runs over every one. On that corpus the purely lexical method takes <strong>756 s against SemHash's 266 s</strong>, making it the slowest of the three. It is cheap on short records and expensive on long ones, which is the opposite of the usual assumption about lexical versus neural deduplication. Section 07 times every method across five corpus sizes.</p>
+    </div>
   </div>
 </section>
 
@@ -282,8 +286,43 @@ code { font-family: var(--font-data); font-size: 0.84em; background: var(--raise
   </div>
 </section>
 
+<section>
+  <div class="col">
+    <span class="eyebrow">07 · Cost</span>
+    <h2>What accuracy costs per million records</h2>
+    <p>Quality without cost is half an answer: a method that is one point better and twenty times slower is not better for a pretraining pipeline. Each method was timed over five prefixes of wikitext-103, up to all 1,165,029 lines, one process per measurement, with peak memory sampled every 20&nbsp;ms and reported <em>above</em> the resident size of the already-loaded corpus.</p>
+  </div>
+  <div class="chart">
+    <h3>Full corpus — 1,165,029 wikitext lines, single core</h3>
+    <div class="bar-row"><span class="name">Exact, normalised</span><div class="bar-track"><div class="bar" style="width:1.6%;background:var(--ink-faint)"></div><span class="bar-val">20 s · 137 MB</span></div></div>
+    <div class="bar-row"><span class="name">Bloom filter</span><div class="bar-track"><div class="bar" style="width:2.1%;background:var(--ink-faint)"></div><span class="bar-val">27 s · 3 MB</span></div></div>
+    <div class="bar-row"><span class="name">SimHash ≤ 3 bits</span><div class="bar-track"><div class="bar" style="width:15.0%;background:var(--word)"></div><span class="bar-val">187 s · 6,415 MB</span></div></div>
+    <div class="bar-row"><span class="name">MinHash ≥ 0.7</span><div class="bar-track"><div class="bar" style="width:15.4%;background:var(--word)"></div><span class="bar-val">192 s · 5,624 MB</span></div></div>
+    <div class="bar-row"><span class="name">SemHash ≥ 0.9</span><div class="bar-track"><div class="bar" style="width:26.7%;background:var(--sem)"></div><span class="bar-val">333 s · 4,803 MB</span></div></div>
+    <div class="bar-row"><span class="name">Cascade (word)</span><div class="bar-track"><div class="bar" style="width:37.2%;background:var(--hybrid)"></div><span class="bar-val">464 s · 5,235 MB</span></div></div>
+    <div class="bar-row"><span class="name">Character MinHash ≥ 0.6</span><div class="bar-track"><div class="bar" style="width:79.9%;background:var(--char)"></div><span class="bar-val">995 s · 5,779 MB</span></div></div>
+    <div class="bar-row"><span class="name">Cascade (character)</span><div class="bar-track"><div class="bar" style="width:100%;background:var(--hybrid)"></div><span class="bar-val">1,246 s · 5,131 MB</span></div></div>
+    <div class="legend">
+      <span><i class="swatch" style="background:var(--ink-faint)"></i>exact</span>
+      <span><i class="swatch" style="background:var(--word)"></i>word-level</span>
+      <span><i class="swatch" style="background:var(--char)"></i>character-level</span>
+      <span><i class="swatch" style="background:var(--sem)"></i>SemHash baseline</span>
+      <span><i class="swatch" style="background:var(--hybrid)"></i>hybrid, built here</span>
+    </div>
+  </div>
+  <div class="col">
+    <div class="panel">
+      <h3>The expensive method is the one without a neural network</h3>
+      <p>Character MinHash takes <strong>three times longer than SemHash</strong>, which runs an embedding model over every record. A 600-character wikitext line yields roughly 600 character shingles against 100 word shingles, so the signature pass does six times the work — while <code>potion-base-8M</code> is a static embedding, a token lookup and a mean with no transformer forward pass. Cost tracks features per document, not whether the signature came from a hash or a model.</p>
+    </div>
+    <p>Nothing here is disqualified by its asymptotics. Over the top three corpus sizes the log–log slopes are 1.07 for character MinHash, 1.12 for word MinHash and 1.14 for SemHash: LSH and approximate-NN both keep candidate generation near-linear, and what separates the methods is a constant factor of about 60×. The exception is SimHash at 1.32 — its block index returns more candidates as the fingerprint space fills, and wikitext's short section headings collide heavily.</p>
+    <p>Memory tells a different story from runtime. Every near-duplicate method sits between 4.8 and 6.4&nbsp;GB above the corpus, because all of them materialise per-record signatures and a candidate-pair list. The Bloom filter uses <strong>3&nbsp;MB</strong> — the one line of this table that would still hold at a hundred times the corpus size, and the reason the structure exists at all.</p>
+    <p class="note">The practical reading: below roughly 100,000 records the cost column is irrelevant and accuracy should decide. Above a few million, these constants decide for you — and the cascade's ordering is the argument in its favour, since its lexical stage clears a sixth of the corpus before anything is embedded, making its semantic stage strictly cheaper than running SemHash alone.</p>
+  </div>
+</section>
+
 <section class="col">
-  <span class="eyebrow">07 · Conclusions</span>
+  <span class="eyebrow">08 · Conclusions</span>
   <h2>What the evidence supports</h2>
   <div class="takeaways">
     <div class="takeaway"><span class="num">01</span><div><strong>Removal rate is not a quality metric.</strong><p>SemHash removes 2.3× more of ag_news than MinHash. On that corpus much of the excess is real. On wikitext the same setting mostly merges three-token section headings. The identical published number means opposite things on the two corpora.</p></div></div>
@@ -291,11 +330,12 @@ code { font-family: var(--font-data); font-size: 0.84em; background: var(--raise
     <div class="takeaway"><span class="num">03</span><div><strong>Cheap filter first, expensive filter second.</strong><p>The character cascade reaches F1 0.916 against SemHash's 0.867 with a third of its label-contradicting errors, because the precise filter clears the easy cases before the permissive one can over-merge them.</p></div></div>
     <div class="takeaway"><span class="num">04</span><div><strong>Deduplication pays when data is already being cut.</strong><p>Nothing measurable below 10% removal; +0.31 points over random subsampling at 24.6%, beyond 2σ.</p></div></div>
     <div class="takeaway"><span class="num">05</span><div><strong>Contamination did not inflate this benchmark.</strong><p>18.5% of the test set duplicates training data and the model scores no better on it. Leakage is a memorisation problem, and this model has nothing to memorise with.</p></div></div>
+    <div class="takeaway"><span class="num">06</span><div><strong>Cost does not follow the lexical/semantic divide.</strong><p>The most accurate lexical method is three times dearer than the neural baseline on a million records, and only the Bloom filter has a memory profile that survives another two orders of magnitude.</p></div></div>
   </div>
 </section>
 
 <section class="col">
-  <span class="eyebrow">08 · Limitations</span>
+  <span class="eyebrow">09 · Limitations</span>
   <h2>Where this evidence stops</h2>
   <ul class="lim">
     <li><strong>The answer key tests corruption, not paraphrase.</strong> Every injected duplicate is a surface edit of a source text, so independently written rewrites — where embeddings should dominate — are unrepresented.</li>

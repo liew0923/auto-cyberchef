@@ -57,6 +57,9 @@ are featurised in a single pass rather than in a Python loop.
   +0.31 points at 24.6% removed (beyond 2σ), nothing measurable below 10%.
 * 18.5% of the ag_news test set duplicates a training record, and the classifier scores **no
   better** on those records than on clean ones.
+* Cost does not follow the lexical/semantic divide: character MinHash (995s on 1.16M wikitext
+  lines) is **three times dearer** than the neural SemHash baseline (333s), because runtime
+  tracks features per document rather than the kind of signature.
 
 ## Reproducing
 

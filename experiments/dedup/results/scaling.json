@@ -232,5 +232,131 @@
     "method_rss_mb": 0.1,
     "removed": 95899,
     "records_per_second": 51252
+  },
+  {
+    "method": "minhash",
+    "n": 600000,
+    "seconds": 91.19,
+    "corpus_rss_mb": 832.4,
+    "method_rss_mb": 2393.4,
+    "removed": 97115,
+    "records_per_second": 6579
+  },
+  {
+    "method": "charminhash",
+    "n": 600000,
+    "seconds": 462.24,
+    "corpus_rss_mb": 833.3,
+    "method_rss_mb": 3615.5,
+    "removed": 108047,
+    "records_per_second": 1298
+  },
+  {
+    "method": "simhash",
+    "n": 600000,
+    "seconds": 67.49,
+    "corpus_rss_mb": 833.3,
+    "method_rss_mb": 2284.9,
+    "removed": 106443,
+    "records_per_second": 8890
+  },
+  {
+    "method": "semhash",
+    "n": 600000,
+    "seconds": 145.9,
+    "corpus_rss_mb": 833.4,
+    "method_rss_mb": 2386.1,
+    "removed": 123939,
+    "records_per_second": 4112
+  },
+  {
+    "method": "hybrid_cascade",
+    "n": 600000,
+    "seconds": 231.13,
+    "corpus_rss_mb": 831.5,
+    "method_rss_mb": 2607.9,
+    "removed": 125568,
+    "records_per_second": 2595
+  },
+  {
+    "method": "hybrid_cascade_char",
+    "n": 600000,
+    "seconds": 649.32,
+    "corpus_rss_mb": 833.4,
+    "method_rss_mb": 4237.9,
+    "removed": 129603,
+    "records_per_second": 924
+  },
+  {
+    "method": "exact_norm",
+    "n": 1165029,
+    "seconds": 20.33,
+    "corpus_rss_mb": 883.3,
+    "method_rss_mb": 137.0,
+    "removed": 205298,
+    "records_per_second": 57310
+  },
+  {
+    "method": "bloom",
+    "n": 1165029,
+    "seconds": 26.55,
+    "corpus_rss_mb": 883.2,
+    "method_rss_mb": 3.2,
+    "removed": 205330,
+    "records_per_second": 43877
+  },
+  {
+    "method": "minhash",
+    "n": 1165029,
+    "seconds": 192.06,
+    "corpus_rss_mb": 883.1,
+    "method_rss_mb": 5624.3,
+    "removed": 209337,
+    "records_per_second": 6065
+  },
+  {
+    "method": "charminhash",
+    "n": 1165029,
+    "seconds": 995.18,
+    "corpus_rss_mb": 883.3,
+    "method_rss_mb": 5779.2,
+    "removed": 234131,
+    "records_per_second": 1170
+  },
+  {
+    "method": "simhash",
+    "n": 1165029,
+    "seconds": 187.45,
+    "corpus_rss_mb": 883.5,
+    "method_rss_mb": 6414.9,
+    "removed": 232922,
+    "records_per_second": 6215
+  },
+  {
+    "method": "semhash",
+    "n": 1165029,
+    "seconds": 333.09,
+    "corpus_rss_mb": 883.3,
+    "method_rss_mb": 4802.7,
+    "removed": 264461,
+    "records_per_second": 3497
+  },
+  {
+    "method": "hybrid_cascade",
+    "n": 1165029,
+    "seconds": 463.52,
+    "corpus_rss_mb": 883.5,
+    "method_rss_mb": 5234.8,
+    "removed": 267604,
+    "records_per_second": 2513
+  },
+  {
+    "method": "hybrid_cascade_char",
+    "n": 1165029,
+    "seconds": 1245.58,
+    "corpus_rss_mb": 883.3,
+    "method_rss_mb": 5130.8,
+    "removed": 276194,
+    "records_per_second": 935
   }
 ]

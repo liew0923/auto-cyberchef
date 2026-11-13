@@ -204,22 +204,48 @@ def precision_recall(synthetic: dict) -> None:
     plt.close(fig)
 
 
+SCALING_LABELS = {
+    "exact_norm": "exact, normalised",
+    "bloom": "Bloom filter",
+    "minhash": "MinHash (word)",
+    "charminhash": "MinHash (char)",
+    "simhash": "SimHash \u2264 3",
+    "semhash": "SemHash 0.9",
+    "hybrid_cascade": "cascade (word)",
+    "hybrid_cascade_char": "cascade (char)",
+}
+
+
+# Methods within a family share a colour, so each gets its own dash pattern and marker.
+SCALING_STYLE = {
+    "exact_norm": ("-", "o"),
+    "bloom": (":", "s"),
+    "minhash": ("-", "o"),
+    "simhash": (":", "s"),
+    "charminhash": ("-", "o"),
+    "semhash": ("-", "o"),
+    "hybrid_cascade": ("--", "o"),
+    "hybrid_cascade_char": ("-.", "s"),
+}
+
+
 def scaling_chart(rows: list) -> None:
-    """Throughput against corpus size, log-log."""
-    fig, axes = plt.subplots(1, 2, figsize=(11, 4))
-    methods = sorted({row["method"] for row in rows})
-    styles = {m: ("-" if not m.startswith("hybrid") else "--") for m in methods}
-    for method in methods:
+    """Runtime and memory against corpus size, log-log."""
+    fig, axes = plt.subplots(1, 2, figsize=(11, 4.2))
+    order = [m for m in SCALING_LABELS if any(r["method"] == m for r in rows)]
+    for method in order:
         series = sorted((r for r in rows if r["method"] == method), key=lambda r: r["n"])
         xs = [r["n"] for r in series]
-        axes[0].plot(xs, [r["seconds"] for r in series], styles[method], color=family_of(method), marker="o", ms=4, label=method)
-        axes[1].plot(xs, [r.get("method_rss_mb", r["peak_rss_mb"]) for r in series], styles[method], color=family_of(method), marker="o", ms=4, label=method)
+        style, marker = SCALING_STYLE[method]
+        label = SCALING_LABELS[method]
+        for ax, key in ((axes[0], "seconds"), (axes[1], "method_rss_mb")):
+            ax.plot(xs, [r[key] for r in series], style, color=family_of(method),
+                    marker=marker, ms=4, mfc="none" if marker == "s" else None, label=label)
     for ax, ylabel, title in (
         (axes[0], "wall-clock seconds", "Runtime"),
-        (axes[1], "MB above the loaded corpus", "Memory used by the method"),
+        (axes[1], "MB above the loaded corpus", "Working memory"),
     ):
         ax.set_xscale("log")
-        ax.set_yscale("log")
         ax.set_xlabel("records")
         ax.set_ylabel(ylabel)
         ax.grid(True, which="both", color=GRID, linewidth=0.7)
@@ -228,9 +254,13 @@ def scaling_chart(rows: list) -> None:
         for side in ax.spines.values():
             side.set_visible(False)
         ax.set_title(title, loc="left", fontsize=10.5, color=INK)
-    axes[1].legend(frameon=False, fontsize=8, loc="upper left")
+    axes[0].set_yscale("log")
+    # Bloom uses a fixed bit array, so its figure is 0 MB: symlog keeps that visible.
+    axes[1].set_yscale("symlog", linthresh=10)
+    axes[1].set_ylim(0, 8000)
+    axes[0].legend(frameon=False, fontsize=8, loc="upper left", ncols=2)
     fig.suptitle("Scaling on wikitext-103", x=0.01, ha="left", fontsize=12.5, fontweight="bold")
-    fig.tight_layout(rect=(0, 0, 1, 0.95))
+    fig.tight_layout(rect=(0, 0, 1, 0.94))
     fig.savefig(RESULTS / "scaling.png", dpi=200, bbox_inches="tight")
     plt.close(fig)
 

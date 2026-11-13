@@ -277,6 +277,71 @@ where semantic deduplication errs. It is informative in one direction only: ag_n
 byte-identical texts carrying contradicting labels, which is annotation noise rather than a
 deduplication finding.
 
+## 8. What it costs
+
+Quality without cost is half an answer: a method that is one point better and twenty times
+slower is not better for a pretraining pipeline. Each method was timed over five prefixes of
+wikitext-103, from 10,000 lines to the full 1,165,029, in a separate process per measurement.
+Peak memory is sampled from `/proc/self/statm` every 20 ms and reported **above** the resident
+size of the already-loaded corpus — `resource.getrusage` reports a high-water mark the corpus
+load has already set, so it cannot see what the method allocates on top of it.
+
+![Runtime and memory against corpus size](results/scaling.png)
+
+### Full corpus: 1,165,029 wikitext lines
+
+| Method | Seconds | Records/s | MB over corpus | Removed |
+|---|---:|---:|---:|---:|
+| Exact, normalised | 20.3 | 57,310 | 137 | 205,298 |
+| Bloom filter | 26.6 | 43,877 | 3 | 205,330 |
+| SimHash ≤ 3 | 187.4 | 6,215 | 6,415 | 232,922 |
+| MinHash, 3-word, J ≥ 0.7 | 192.1 | 6,065 | 5,624 | 209,337 |
+| SemHash 0.9 | 333.1 | 3,497 | 4,803 | 264,461 |
+| Cascade (word) | 463.5 | 2,513 | 5,235 | 267,604 |
+| MinHash, 5-char, J ≥ 0.6 | 995.2 | 1,170 | 5,779 | 234,131 |
+| Cascade (char) | 1,245.6 | 935 | 5,131 | 276,194 |
+
+Four observations, none of which I expected before measuring.
+
+**Character shingles are the expensive ones, not the embeddings.** The project's most accurate
+lexical method is also its slowest: character MinHash takes 3× as long as SemHash, which runs a
+neural embedding model over every record. The usual intuition — hashing is cheap, embedding is
+dear — is inverted here, because a wikitext line of 600 characters yields ~600 character
+shingles against ~100 word shingles, so the signature pass does six times the work, while
+`potion-base-8M` is a static embedding: a token-to-vector lookup and a mean, with no transformer
+forward pass. The lexical/semantic axis says nothing about cost on its own; the number of
+features per document does.
+
+**Everything near-duplicate is roughly linear, and the constant is what separates the methods.**
+Over the top three sizes the log-log slopes are 1.07 (char MinHash), 1.12 (word MinHash), 1.14
+(SemHash) and 1.32 (SimHash). LSH and ANN both keep candidate generation near-linear as
+designed, so no method is disqualified by its asymptotics at this scale; the spread in the table
+is a constant factor of about 60× between the cheapest and the dearest.
+
+**SimHash's slope is the one to watch.** At 1.32 it is the only method growing visibly
+super-linearly, and the reason is structural rather than incidental: the 6-block index returns
+candidates whose count grows with the density of the fingerprint space, and wikitext's many short
+section headings collide heavily. It is the second-cheapest method at 200k and the third-dearest
+trajectory by 1.16M.
+
+**Bloom is the only method with a flat memory profile.** 3 MB at 1.16M records, against 137 MB
+for the exact hash set it approximates and 4.8–6.4 GB for every near-duplicate method. That is
+the whole point of the structure, and it is the one result in the table that would still hold at
+100× the corpus size: the near-duplicate methods all materialise per-record signatures and a
+candidate-pair list, so at a billion records none of them fits in memory as written and all would
+need sharding by LSH band — a limitation of this implementation, not of the algorithms.
+
+### What this means for the recommendation
+
+The cascade's extra accuracy is not free: it costs 1.4× SemHash in the word variant and 3.7× in
+the character variant. For a corpus you deduplicate once, that is irrelevant — 21 minutes on one
+core for 1.16M records. For a pipeline reprocessing a corpus repeatedly, the ordering is the
+argument: the cascade's lexical stage removes 18% of the corpus before anything is embedded, so
+its semantic stage is strictly cheaper than running SemHash alone, and the difference grows with
+how duplicated the corpus is. The honest summary is that below ~100k records the cost column
+does not matter and accuracy should decide; above a few million, the constant factors in this
+table decide for you.
+
 ## 9. Conclusions
 
 **1. Removal rate is not a quality metric.** SemHash removes 2.3× more of ag_news than MinHash
@@ -303,6 +368,12 @@ in.
 training record by SemHash's reckoning, and the model scores no better on those records than on
 clean ones. Leakage is a memorisation problem, and a 4-way linear classifier has nothing to
 memorise with.
+
+**6. Cost does not follow the lexical/semantic divide.** The most accurate lexical method
+(character MinHash, 995s on 1.16M records) is three times dearer than the neural baseline
+(SemHash, 333s), because cost tracks features per document, not whether a vector came from a
+hash or a model. Only the Bloom filter has a memory profile that would survive another two
+orders of magnitude.
 
 ## 10. Limitations
 
