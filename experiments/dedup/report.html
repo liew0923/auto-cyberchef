@@ -291,6 +291,7 @@ code { font-family: var(--font-data); font-size: 0.84em; background: var(--raise
     <span class="eyebrow">07 · Cost</span>
     <h2>What accuracy costs per million records</h2>
     <p>Quality without cost is half an answer: a method that is one point better and twenty times slower is not better for a pretraining pipeline. Each method was timed over five prefixes of wikitext-103, up to all 1,165,029 lines, one process per measurement, with peak memory sampled every 20&nbsp;ms and reported <em>above</em> the resident size of the already-loaded corpus.</p>
+    <p class="note">These numbers run larger than the 756&nbsp;s quoted in section 02 because the two measure different work: that figure searches only the 959,731 exact-unique records, as SemHash does, so the thresholds stay comparable; these run every method over all 1,165,029, so the size axis means what it says. The ratio between methods barely moves — 2.8× there, 3.0× here.</p>
   </div>
   <div class="chart">
     <h3>Full corpus — 1,165,029 wikitext lines, single core</h3>

@@ -286,6 +286,12 @@ Peak memory is sampled from `/proc/self/statm` every 20 ms and reported **above*
 size of the already-loaded corpus — `resource.getrusage` reports a high-water mark the corpus
 load has already set, so it cannot see what the method allocates on top of it.
 
+These timings are larger than the ones in §3 (756 s for character MinHash against 995 s here)
+because the two scripts measure different work. `run_experiment.py` runs near-duplicate search on
+the 959,731 exact-unique records, as SemHash does, so that the thresholds stay comparable;
+`scaling.py` runs each method over all 1,165,029 records, so that the size axis means what it
+says. The ratio between methods is unaffected — 2.8× in §3, 3.0× here.
+
 ![Runtime and memory against corpus size](results/scaling.png)
 
 ### Full corpus: 1,165,029 wikitext lines
